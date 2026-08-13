@@ -10,13 +10,44 @@ let calendarInstance = null;
 let calendarFilters = {};   // disciplineId -> bool (visível?)
 let calendarCurrentView = 'mes';
 
+// O ambulatório de Ped 2 é semanal e cada aluno escolhe UM dia (terça, quinta ou sexta) —
+// por isso não fica numa lista fixa de datas em data.js, e sim gerado aqui a partir da
+// escolha salva em userSettings.ambulatorioPedDia.
+const PED2_AMBULATORIO_DOW = { terca: 2, quinta: 4, sexta: 5 };
+const PED2_AMBULATORIO_START = '2026-08-11';
+const PED2_AMBULATORIO_END = '2026-12-08';
+const PED2_AMBULATORIO_SKIP = ['2026-09-22', '2026-09-24', '2026-09-25', '2026-11-20']; // Semana Universitária + feriado
+
+function buildPed2AmbulatorioEvents() {
+  const dia = userSettings.ambulatorioPedDia;
+  if (!dia || !PED2_AMBULATORIO_DOW[dia]) return [];
+  const targetDow = PED2_AMBULATORIO_DOW[dia];
+  const start = new Date(PED2_AMBULATORIO_START + 'T00:00:00');
+  const end = new Date(PED2_AMBULATORIO_END + 'T00:00:00');
+  const d = new Date(start);
+  while (d.getDay() !== targetDow) d.setDate(d.getDate() + 1);
+  const out = [];
+  let i = 0;
+  while (d <= end) {
+    const iso = d.toISOString().slice(0, 10);
+    if (!PED2_AMBULATORIO_SKIP.includes(iso)) {
+      out.push({ date: iso, time: '14:00', type: 'estagio', title: 'Ambulatório de Ped 2 (14h-18h)', _key: 'amb-' + (i++) });
+    }
+    d.setDate(d.getDate() + 7);
+  }
+  return out;
+}
+
 function buildAllEvents() {
   const events = [];
   userDisciplines.forEach(d => {
-    (d.schedule || []).forEach((ev, idx) => {
+    let sched = d.schedule || [];
+    if (d.id === 'ped2') sched = sched.concat(buildPed2AmbulatorioEvents());
+    if (d.id === 'cir2') sched = sched.concat(buildOftalmoEvents());
+    sched.forEach((ev, idx) => {
       const isProva = ev.type === 'prova';
       events.push({
-        id: `${d.id}-${idx}`,
+        id: `${d.id}-${ev._key || idx}`,
         title: `${d.emoji} ${ev.title}`,
         start: ev.date + (ev.time ? 'T' + ev.time : ''),
         allDay: !ev.time,
@@ -122,7 +153,10 @@ function renderProvasTable() {
 
 // ── AGENDA (lista) por disciplina — usada dentro do painel da matéria ──
 function renderDisciplineAgenda(d) {
-  const events = (d.schedule || []).slice().sort((a, b) => a.date.localeCompare(b.date));
+  let sched = (d.schedule || []).slice();
+  if (d.id === 'ped2') sched = sched.concat(buildPed2AmbulatorioEvents());
+  if (d.id === 'cir2') sched = sched.concat(buildOftalmoEvents());
+  const events = sched.sort((a, b) => a.date.localeCompare(b.date) || (a.time || '').localeCompare(b.time || ''));
   if (!events.length) return `<div class="agenda-empty">Sem cronograma cadastrado.</div>`;
   const today = new Date().toISOString().slice(0, 10);
   const items = events.map(ev => {
@@ -134,7 +168,7 @@ function renderDisciplineAgenda(d) {
     return `<div class="agenda-item" style="${past}">
       <div class="agenda-date"><div class="d">${day}</div><div class="m">${month}</div></div>
       <span class="agenda-type" style="background:${meta.color}22;color:${meta.color}">${meta.label}</span>
-      <div class="agenda-body"><div class="agenda-title">${ev.title}</div></div>
+      <div class="agenda-body"><div class="agenda-title">${ev.title}</div>${ev.time ? `<div class="agenda-meta">${ev.time}</div>` : ''}</div>
     </div>`;
   }).join('');
   return `<div class="agenda-list">${items}</div>`;

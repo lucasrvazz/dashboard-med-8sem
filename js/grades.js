@@ -69,10 +69,13 @@ function calcSubjectMetrics(dId) {
 
 // ── Painel do semestre: média entre todas as disciplinas + contagem de aprovação ──
 function calcSemesterOverview() {
-  if (!userDisciplines.length) return null;
+  // Disciplinas ainda sem ementa importada (sem avaliações cadastradas) não entram na
+  // média nem na contagem de aprovação — não há nota nenhuma para calcular ainda.
+  const graded = userDisciplines.filter(d => (d.assessments || []).length > 0);
+  if (!graded.length) return null;
   let sumAtual = 0, sumMin = 0, sumMax = 0;
   let countOk = 0, countDanger = 0, countWarn = 0;
-  const perDisc = userDisciplines.map(d => {
+  const perDisc = graded.map(d => {
     const m = calcSubjectMetrics(d.id);
     sumAtual += m.atualNum; sumMin += m.minNum; sumMax += m.maxNum;
     if (m.cls === 'ok') countOk++;
@@ -80,7 +83,7 @@ function calcSemesterOverview() {
     else countWarn++;
     return { id: d.id, label: d.label, emoji: d.emoji, color: d.color, ...m };
   });
-  const n = userDisciplines.length;
+  const n = graded.length;
   return {
     mediaAtual: (sumAtual / n), mediaMin: (sumMin / n), mediaMax: (sumMax / n),
     countOk, countDanger, countWarn, total: n,

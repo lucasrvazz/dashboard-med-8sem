@@ -176,6 +176,9 @@ function renderDiscPanel(d) {
       </div>
     </div>
 
+    ${d.id === 'ped2' ? renderAmbulatorioPicker() : ''}
+    ${d.id === 'cir2' ? renderOftalmoPicker() : ''}
+
     <div class="dash-title">📅 Próximas aulas e provas</div>
     ${renderDisciplineAgenda(d)}
     <div style="margin-bottom:20px">
@@ -186,6 +189,24 @@ function renderDiscPanel(d) {
     ${sectionsHtml}
   `;
 }
+
+function renderAmbulatorioPicker() {
+  const dia = userSettings.ambulatorioPedDia || '';
+  const opts = [
+    { v: '', l: 'Escolher...' },
+    { v: 'terca', l: 'Terça-feira' },
+    { v: 'quinta', l: 'Quinta-feira' },
+    { v: 'sexta', l: 'Sexta-feira' }
+  ].map(o => `<option value="${o.v}" ${dia === o.v ? 'selected' : ''}>${o.l}</option>`).join('');
+  return `
+    <div class="global-pi-box" style="border-color:${dia ? 'var(--sky)' : '#cbd5e1'}">
+      <label>🏥 Dia do Ambulatório de Ped 2 (14h-18h, escolha um: terça, quinta ou sexta):</label>
+      <select onchange="updateAmbulatorioDia(this.value)" style="padding:8px;border-radius:8px;border:1px solid #94a3b8;font-family:'DM Mono',monospace">${opts}</select>
+      ${dia ? `<span style="font-size:0.75rem;color:var(--slate)">Os eventos já aparecem no calendário e na agenda desta disciplina.</span>` : `<span style="font-size:0.75rem;color:var(--rose)">Escolha um dia para os eventos do ambulatório aparecerem no calendário.</span>`}
+    </div>
+  `;
+}
+function updateAmbulatorioDia(val) { userSettings.ambulatorioPedDia = val || null; scheduleSave(); renderAll(); }
 
 function renderSection(d, s, si) {
   const items = s.items || [];
