@@ -31,11 +31,21 @@ function buildPed2AmbulatorioEvents() {
   while (d <= end) {
     const iso = d.toISOString().slice(0, 10);
     if (!PED2_AMBULATORIO_SKIP.includes(iso)) {
-      out.push({ date: iso, time: '14:00', type: 'estagio', title: 'Ambulatório de Ped 2 (14h-18h)', _key: 'amb-' + (i++) });
+      out.push({ date: iso, time: '14:00', dur: 240, type: 'estagio', title: 'Ambulatório de Ped 2 (14h-18h)', _key: 'amb-' + (i++) });
     }
     d.setDate(d.getDate() + 7);
   }
   return out;
+}
+
+// Soma minutos a uma data+hora local (sem depender de fuso) e devolve no formato
+// "YYYY-MM-DDTHH:MM" que o FullCalendar e a Google Calendar API aceitam.
+function addMinutesLocal(dateISO, timeStr, minutes) {
+  const [h, m] = timeStr.split(':').map(Number);
+  const d = new Date(dateISO + 'T00:00:00');
+  d.setHours(h, m + minutes, 0, 0);
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
 function buildAllEvents() {
@@ -46,16 +56,18 @@ function buildAllEvents() {
     if (d.id === 'cir2') sched = sched.concat(buildOftalmoEvents()).concat(buildCirurgiaRodizioEvents());
     sched.forEach((ev, idx) => {
       const isProva = ev.type === 'prova';
+      const dur = ev.dur || 60; // duração em minutos — 60 é o padrão quando a duração exata não está marcada
       events.push({
         id: `${d.id}-${ev._key || idx}`,
         title: `${d.emoji} ${ev.title}`,
         start: ev.date + (ev.time ? 'T' + ev.time : ''),
+        end: ev.time ? addMinutesLocal(ev.date, ev.time, dur) : undefined,
         allDay: !ev.time,
         backgroundColor: isProva ? '#e11d48' : d.color,
         borderColor: isProva ? '#e11d48' : d.color,
         extendedProps: {
           disciplineId: d.id, disciplineLabel: d.label, disciplineEmoji: d.emoji,
-          type: ev.type, rawTitle: ev.title, dateRaw: ev.date
+          type: ev.type, rawTitle: ev.title, dateRaw: ev.date, timeRaw: ev.time, durMin: dur
         }
       });
     });
@@ -168,7 +180,7 @@ function renderDisciplineAgenda(d) {
     return `<div class="agenda-item" style="${past}">
       <div class="agenda-date"><div class="d">${day}</div><div class="m">${month}</div></div>
       <span class="agenda-type" style="background:${meta.color}22;color:${meta.color}">${meta.label}</span>
-      <div class="agenda-body"><div class="agenda-title">${ev.title}</div>${ev.time ? `<div class="agenda-meta">${ev.time}</div>` : ''}</div>
+      <div class="agenda-body"><div class="agenda-title">${ev.title}</div>${ev.time ? `<div class="agenda-meta">${ev.time}–${addMinutesLocal(ev.date, ev.time, ev.dur || 60).slice(11)}</div>` : ''}</div>
     </div>`;
   }).join('');
   return `<div class="agenda-list">${items}</div>`;
@@ -209,7 +221,8 @@ async function upsertGCalEvent(token, calendarId, ev) {
     body.end = { date: ev.extendedProps.dateRaw };
   } else {
     const startDt = new Date(ev.start);
-    const endDt = new Date(startDt.getTime() + 60 * 60000);
+    const durMin = ev.extendedProps.durMin || 60;
+    const endDt = new Date(startDt.getTime() + durMin * 60000);
     body.start = { dateTime: startDt.toISOString(), timeZone: 'America/Sao_Paulo' };
     body.end = { dateTime: endDt.toISOString(), timeZone: 'America/Sao_Paulo' };
   }

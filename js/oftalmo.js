@@ -92,7 +92,7 @@ function buildOftalmoEvents() {
   const grupo = userSettings.cirurgiaGrupo, tipo = userSettings.cirurgiaOftalmoTipo;
   const dates = getOftalmoDatesFor(grupo, tipo);
   return dates.map((iso, i) => ({
-    date: iso, time: '14:00', type: 'estagio',
+    date: iso, time: '14:00', dur: 120, type: 'estagio',
     title: `Rodízio tarde — Oftalmo (${oftalmoDiaLabel(iso)} — Grupo ${grupo}${tipo === 'fixo' ? ', fixo' : tipo === 'sub1' ? ', subgrupo 1' : ', subgrupo 2'})`,
     _key: 'oft-' + i
   }));
@@ -108,9 +108,9 @@ function buildCirurgiaRodizioEvents() {
   let i = 0;
   blocks.forEach(block => {
     block.mondays.forEach(date => {
-      out.push({ date, time: '08:00', type: 'estagio', title: `Rodízio manhã — ${block.manha} (Grupo ${grupo})`, _key: 'rodm-' + (i++) });
+      out.push({ date, time: '08:00', dur: 120, type: 'estagio', title: `Rodízio manhã — ${block.manha} (Grupo ${grupo})`, _key: 'rodm-' + (i++) });
       if (block.tarde === 'Otorrino') {
-        out.push({ date, time: '14:00', type: 'estagio', title: `Rodízio tarde — Otorrino (Grupo ${grupo})`, _key: 'rodt-' + (i++) });
+        out.push({ date, time: '14:00', dur: 120, type: 'estagio', title: `Rodízio tarde — Otorrino (Grupo ${grupo})`, _key: 'rodt-' + (i++) });
       }
       // A tarde de Oftalmo é gerada à parte por buildOftalmoEvents(), pois depende do subgrupo.
     });
