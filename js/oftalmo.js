@@ -19,7 +19,7 @@ const GRUPOS_CIRURGIA = {
 
 const OFTALMO_SUBGRUPOS = {
   A1: ['Nicholas','Laryssa','Letícia','Duda'],
-  A2: ['Isabela Paulista','Victor (confirme: Matheus ou Gabriel?)','Julia','Biatriz'],
+  A2: ['Isabela Paulista','Victor Gabriel','Julia','Biatriz'],
   B1: ['Gabriela','Lalesca','Clara','Fiuza','Gustavo'],
   B2: ['Ana Pinto','Emillen','Daniel Luiz','Patrícia','Milena'],
   C1: ['Pedro César','Lucas Vaz','Luís Filipe','Geovana','Débora'],
