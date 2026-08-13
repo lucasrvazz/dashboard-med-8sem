@@ -39,6 +39,39 @@ const OFTALMO_DATES = {
   FIXO_BD: ['2026-08-17','2026-08-24','2026-08-31','2026-10-26','2026-11-09','2026-11-16']
 };
 
+// ── RODÍZIO COMPLETO DE SEGUNDA-FEIRA (manhã + tarde) ──
+// Cada grupo passa por 4 blocos de 3 segundas-feiras ao longo do semestre,
+// alternando entre 4 estações da manhã (Anestesia CC, Ortopedia Consultório,
+// Anestesia Simulação, Ortopedia B) e a estação da tarde correspondente
+// (Otorrino ou Oftalmo). Só a tarde de Oftalmo tem o revezamento por subgrupo
+// (ver OFTALMO_DATES acima) — Otorrino e as 4 manhãs valem para o grupo inteiro.
+const CIRURGIA_RODIZIO_BLOCKS = {
+  A: [
+    { mondays: ['2026-08-17', '2026-08-24', '2026-08-31'], manha: 'Anestesia CC', tarde: 'Otorrino' },
+    { mondays: ['2026-09-28', '2026-10-05', '2026-10-19'], manha: 'Ortopedia (Consultório)', tarde: 'Oftalmo' },
+    { mondays: ['2026-10-26', '2026-11-09', '2026-11-16'], manha: 'Anestesia (Simulação)', tarde: 'Otorrino' },
+    { mondays: ['2026-11-23', '2026-11-30', '2026-12-07'], manha: 'Ortopedia B', tarde: 'Oftalmo' }
+  ],
+  B: [
+    { mondays: ['2026-08-17', '2026-08-24', '2026-08-31'], manha: 'Ortopedia (Consultório)', tarde: 'Oftalmo' },
+    { mondays: ['2026-09-28', '2026-10-05', '2026-10-19'], manha: 'Anestesia (Simulação)', tarde: 'Otorrino' },
+    { mondays: ['2026-10-26', '2026-11-09', '2026-11-16'], manha: 'Ortopedia B', tarde: 'Oftalmo' },
+    { mondays: ['2026-11-23', '2026-11-30', '2026-12-07'], manha: 'Anestesia CC', tarde: 'Otorrino' }
+  ],
+  C: [
+    { mondays: ['2026-08-17', '2026-08-24', '2026-08-31'], manha: 'Anestesia (Simulação)', tarde: 'Otorrino' },
+    { mondays: ['2026-09-28', '2026-10-05', '2026-10-19'], manha: 'Ortopedia B', tarde: 'Oftalmo' },
+    { mondays: ['2026-10-26', '2026-11-09', '2026-11-16'], manha: 'Anestesia CC', tarde: 'Otorrino' },
+    { mondays: ['2026-11-23', '2026-11-30', '2026-12-07'], manha: 'Ortopedia (Consultório)', tarde: 'Oftalmo' }
+  ],
+  D: [
+    { mondays: ['2026-08-17', '2026-08-24', '2026-08-31'], manha: 'Ortopedia B', tarde: 'Oftalmo' },
+    { mondays: ['2026-09-28', '2026-10-05', '2026-10-19'], manha: 'Anestesia CC', tarde: 'Otorrino' },
+    { mondays: ['2026-10-26', '2026-11-09', '2026-11-16'], manha: 'Ortopedia (Consultório)', tarde: 'Oftalmo' },
+    { mondays: ['2026-11-23', '2026-11-30', '2026-12-07'], manha: 'Anestesia (Simulação)', tarde: 'Otorrino' }
+  ]
+};
+
 // dias da semana (para o rótulo do evento — todas as datas acima já vêm marcadas
 // como Seg ou Ter na planilha original; recalculamos aqui a partir da própria data)
 function oftalmoDiaLabel(iso) {
@@ -60,9 +93,40 @@ function buildOftalmoEvents() {
   const dates = getOftalmoDatesFor(grupo, tipo);
   return dates.map((iso, i) => ({
     date: iso, time: '14:00', type: 'estagio',
-    title: `Rodízio Oftalmo (${oftalmoDiaLabel(iso)} — Grupo ${grupo}${tipo === 'fixo' ? ', fixo' : tipo === 'sub1' ? ', subgrupo 1' : ', subgrupo 2'})`,
+    title: `Rodízio tarde — Oftalmo (${oftalmoDiaLabel(iso)} — Grupo ${grupo}${tipo === 'fixo' ? ', fixo' : tipo === 'sub1' ? ', subgrupo 1' : ', subgrupo 2'})`,
     _key: 'oft-' + i
   }));
+}
+
+// Gera os eventos de manhã (todas as 4 estações) e de Otorrino à tarde — sempre
+// para o grupo inteiro, sem revezamento por subgrupo (isso só existe na Oftalmo).
+function buildCirurgiaRodizioEvents() {
+  const grupo = userSettings.cirurgiaGrupo;
+  const blocks = CIRURGIA_RODIZIO_BLOCKS[grupo];
+  if (!blocks) return [];
+  const out = [];
+  let i = 0;
+  blocks.forEach(block => {
+    block.mondays.forEach(date => {
+      out.push({ date, time: '08:00', type: 'estagio', title: `Rodízio manhã — ${block.manha} (Grupo ${grupo})`, _key: 'rodm-' + (i++) });
+      if (block.tarde === 'Otorrino') {
+        out.push({ date, time: '14:00', type: 'estagio', title: `Rodízio tarde — Otorrino (Grupo ${grupo})`, _key: 'rodt-' + (i++) });
+      }
+      // A tarde de Oftalmo é gerada à parte por buildOftalmoEvents(), pois depende do subgrupo.
+    });
+  });
+  return out;
+}
+
+function renderCirurgiaBlocksSummary(grupo) {
+  const blocks = CIRURGIA_RODIZIO_BLOCKS[grupo];
+  if (!blocks) return '';
+  const rows = blocks.map(b => {
+    const ini = b.mondays[0], fim = b.mondays[b.mondays.length - 1];
+    const fmt = iso => new Date(iso + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+    return `<tr><td>${fmt(ini)} – ${fmt(fim)}</td><td>${b.manha}</td><td>${b.tarde}${b.tarde === 'Oftalmo' ? ' (segue seu subgrupo)' : ''}</td></tr>`;
+  }).join('');
+  return `<table class="provas-table" style="margin-top:10px"><thead><tr><th>Semanas</th><th>Manhã (8h-10h)</th><th>Tarde (14h-16h)</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
 function renderOftalmoPicker() {
@@ -92,12 +156,13 @@ function renderOftalmoPicker() {
 
   return `
     <div class="global-pi-box" style="border-color:${grupo && tipo ? 'var(--sky)' : '#cbd5e1'};flex-direction:column;align-items:flex-start;gap:10px">
-      <label>🔬 Rodízio de Oftalmologia — selecione seu grupo e situação:</label>
+      <label>🔬 Rodízios de Cirurgia 2 (Anestesia, Ortopedia, Otorrino, Oftalmo) — selecione seu grupo e situação:</label>
       <div style="display:flex;gap:10px;flex-wrap:wrap">
         <select onchange="updateCirurgiaGrupo(this.value)" style="padding:8px;border-radius:8px;border:1px solid #94a3b8;font-family:'DM Mono',monospace">${grupoOpts}</select>
         <select onchange="updateCirurgiaOftalmoTipo(this.value)" style="padding:8px;border-radius:8px;border:1px solid #94a3b8;font-family:'DM Mono',monospace">${tipoOpts}</select>
       </div>
-      ${grupo && tipo ? `<span style="font-size:0.75rem;color:var(--slate)">Suas datas de oftalmo já aparecem na agenda abaixo e no calendário.</span>` : ''}
+      ${grupo && tipo ? `<span style="font-size:0.75rem;color:var(--slate)">Todos os seus rodízios (manhã + tarde) já aparecem na agenda abaixo e no calendário.</span>` : grupo ? `<span style="font-size:0.75rem;color:var(--rose)">Escolha sua situação (fixo/subgrupo 1/subgrupo 2) para a tarde de Oftalmo entrar certinha na agenda — as manhãs e o Otorrino já valem só com o grupo escolhido.</span>` : ''}
+      ${grupo ? renderCirurgiaBlocksSummary(grupo) : ''}
       ${rosterHtml}
     </div>
   `;

@@ -43,7 +43,7 @@ function buildAllEvents() {
   userDisciplines.forEach(d => {
     let sched = d.schedule || [];
     if (d.id === 'ped2') sched = sched.concat(buildPed2AmbulatorioEvents());
-    if (d.id === 'cir2') sched = sched.concat(buildOftalmoEvents());
+    if (d.id === 'cir2') sched = sched.concat(buildOftalmoEvents()).concat(buildCirurgiaRodizioEvents());
     sched.forEach((ev, idx) => {
       const isProva = ev.type === 'prova';
       events.push({
@@ -155,7 +155,7 @@ function renderProvasTable() {
 function renderDisciplineAgenda(d) {
   let sched = (d.schedule || []).slice();
   if (d.id === 'ped2') sched = sched.concat(buildPed2AmbulatorioEvents());
-  if (d.id === 'cir2') sched = sched.concat(buildOftalmoEvents());
+  if (d.id === 'cir2') sched = sched.concat(buildOftalmoEvents()).concat(buildCirurgiaRodizioEvents());
   const events = sched.sort((a, b) => a.date.localeCompare(b.date) || (a.time || '').localeCompare(b.time || ''));
   if (!events.length) return `<div class="agenda-empty">Sem cronograma cadastrado.</div>`;
   const today = new Date().toISOString().slice(0, 10);
