@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Política de Privacidade — Dashboard MED 117</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--navy:#0f1f3d;--navy-light:#244080;--teal:#0d9488;--slate:#64748b;--bg:#f8fafc;--surface:#fff;--border:#e2e8f0;--text:#1e293b}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.65}
+.hdr{background:linear-gradient(135deg,var(--navy),var(--navy-light));color:#fff;padding:32px 24px}
+.hdr-inner{max-width:760px;margin:0 auto}
+.hdr h1{font-size:1.5rem;font-weight:700}
+.hdr p{font-size:.8rem;opacity:.65;margin-top:6px;font-family:monospace}
+main{max-width:760px;margin:0 auto;padding:32px 24px 80px}
+.box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px 28px;margin-bottom:20px;box-shadow:0 4px 12px rgba(0,0,0,.03)}
+h2{font-size:1.05rem;color:var(--navy);margin-bottom:10px;margin-top:4px}
+p,li{color:var(--text);font-size:.92rem}
+p{margin-bottom:10px}
+ul{margin:8px 0 8px 20px}
+li{margin-bottom:6px}
+strong{color:var(--navy)}
+a{color:var(--teal);text-decoration:underline}
+.back{display:inline-block;margin-bottom:20px;font-size:.85rem;color:var(--slate);text-decoration:none}
+.back:hover{color:var(--navy)}
+.updated{font-size:.78rem;color:var(--slate);margin-top:24px;text-align:center}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-inner">
+    <h1>🎓 Política de Privacidade</h1>
+    <p>Dashboard MED 117 · Turma 117 · Medicina UnB</p>
+  </div>
+</div>
+
+<main>
+  <a class="back" href="index.html">← Voltar para o dashboard</a>
+
+  <div class="box">
+    <p>Este site é um projeto pessoal, criado por um estudante da Turma 117 do curso de Medicina da UnB, para uso próprio e dos colegas de turma no acompanhamento de notas, conteúdo de provas e cronograma do 8º semestre. Não é um serviço comercial, não é operado por nenhuma empresa, e não vende nem compartilha dados com anunciantes.</p>
+  </div>
+
+  <div class="box">
+    <h2>1. Quais dados são coletados</h2>
+    <p><strong>a) Dados da sua conta Google (login):</strong> ao entrar no site, coletamos seu nome, e-mail e foto de perfil, fornecidos pelo Google através do Firebase Authentication. Usamos isso só para identificar sua conta e mostrar seus próprios dados.</p>
+    <p><strong>b) Dados que você mesmo insere:</strong> notas das disciplinas, progresso de estudo (checklist), grupo e subgrupo do rodízio de Cirurgia 2, dia escolhido para o ambulatório de Ped 2, e nota do Seminário Integrador.</p>
+    <p><strong>c) Google Agenda (opcional):</strong> só se você clicar em "Sincronizar Google Agenda", o site solicita permissão para criar e editar eventos numa agenda própria, criada por ele mesmo na sua conta Google ("🎓 Medicina 8º Sem — 117"). O site não lê nem modifica nenhuma outra agenda ou evento seu.</p>
+    <p><strong>d) Chave de API do Gemini (opcional):</strong> se você usar a aba "Importar Ementa", sua chave de API é salva apenas no armazenamento local do seu próprio navegador (localStorage) — ela nunca é enviada a nenhum servidor deste site, sendo usada só para chamar diretamente a API do Google Gemini a partir do seu navegador.</p>
+  </div>
+
+  <div class="box">
+    <h2>2. Como os dados são usados</h2>
+    <ul>
+      <li>Identificar sua conta e manter seus dados separados dos de outros usuários;</li>
+      <li>Salvar e sincronizar suas notas e progresso entre seus dispositivos;</li>
+      <li>Calcular médias, notas mínimas/máximas e status de aprovação;</li>
+      <li>Gerar e sincronizar eventos de calendário, quando solicitado;</li>
+      <li>Extrair conteúdo estruturado de PDFs de ementas que você mesmo enviar, quando solicitado.</li>
+    </ul>
+  </div>
+
+  <div class="box">
+    <h2>3. Onde os dados ficam armazenados</h2>
+    <p>Notas e progresso ficam guardados no <strong>Firebase / Google Cloud</strong> (Firestore), em um projeto de uso pessoal do mantenedor do site, associados ao identificador único da sua conta Google. A chave do Gemini (se você usar) fica só no seu navegador, nunca em um servidor.</p>
+  </div>
+
+  <div class="box">
+    <h2>4. Compartilhamento com terceiros</h2>
+    <p>Não vendemos, alugamos nem compartilhamos seus dados com terceiros para fins de marketing ou publicidade. Os únicos serviços de terceiros envolvidos são:</p>
+    <ul>
+      <li><strong>Google (Firebase Authentication e Firestore)</strong> — para login e armazenamento dos seus dados de notas/checklist;</li>
+      <li><strong>Google Calendar API</strong> — só quando você aciona a sincronização, usando a permissão concedida por você mesmo;</li>
+      <li><strong>Google Gemini API</strong> — só quando você importa um PDF de ementa, usando a sua própria chave de API, diretamente do seu navegador para o Google.</li>
+    </ul>
+  </div>
+
+  <div class="box">
+    <h2>5. Segurança</h2>
+    <p>O site é servido por HTTPS. O login é feito exclusivamente pela autenticação oficial do Google (Firebase Authentication) — este site nunca vê nem armazena sua senha do Google. Seus dados no Firestore ficam vinculados ao identificador da sua conta.</p>
+  </div>
+
+  <div class="box">
+    <h2>6. Como excluir seus dados</h2>
+    <p>Você pode pedir a exclusão completa dos seus dados (notas, progresso, preferências) a qualquer momento entrando em contato pelo e-mail abaixo. Você também pode revogar a permissão de acesso à sua Google Agenda a qualquer momento em <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">myaccount.google.com/permissions</a>, e apagar manualmente a chave do Gemini limpando os dados do site no seu navegador.</p>
+  </div>
+
+  <div class="box">
+    <h2>7. Alterações nesta política</h2>
+    <p>Esta política pode ser atualizada conforme o site ganha novas funcionalidades. A data da última atualização está no rodapé desta página.</p>
+  </div>
+
+  <div class="box">
+    <h2>8. Contato</h2>
+    <p>Dúvidas, pedidos de exclusão de dados ou qualquer outra questão sobre privacidade: <a href="mailto:lucasvaz45@gmail.com">lucasvaz45@gmail.com</a></p>
+  </div>
+
+  <div class="updated">Última atualização: 14 de agosto de 2026</div>
+</main>
+
+</body>
+</html>
