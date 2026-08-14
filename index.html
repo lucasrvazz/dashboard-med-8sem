@@ -11,13 +11,24 @@
 </head>
 <body>
 
+<!-- Conteúdo estático sempre presente no HTML, visível independente de JavaScript/login —
+     necessário para a verificação de app do Google (nome, finalidade, link da política). -->
+<section id="about-static" style="max-width:640px;margin:0 auto;padding:28px 24px;font-family:'DM Sans',sans-serif;color:#1e293b">
+  <h1 style="font-size:1.3rem;font-weight:700;color:#0f1f3d">🎓 Dashboard MED 117 — 8º Semestre</h1>
+  <p style="margin-top:8px;font-size:.9rem;line-height:1.6">Ferramenta pessoal, criada por um estudante para a Turma 117 do curso de Medicina da UnB, para acompanhar notas, conteúdo de provas, cronograma de aulas e rodízios do 8º semestre, com sincronização opcional com a Google Agenda.</p>
+  <p style="margin-top:10px;font-size:.82rem"><a href="privacy.html" style="color:#0d9488">Política de Privacidade</a></p>
+</section>
+<noscript>
+  <p style="max-width:640px;margin:0 auto;padding:0 24px 24px;font-size:.85rem">Este site precisa de JavaScript para funcionar. Veja nossa <a href="privacy.html">Política de Privacidade</a>.</p>
+</noscript>
+
 <div id="loading-screen"><div class="spinner"></div><div class="loading-txt">carregando...</div></div>
 
 <div id="login-screen">
   <div class="login-card">
     <div class="login-emoji">🎓</div>
-    <div class="login-title">Dashboard MED 117</div>
-    <div class="login-sub">8º Semestre · UnB · 2026.2</div>
+    <div class="login-title">Dashboard MED 117 — 8º Semestre</div>
+    <div class="login-sub">UnB · 2026.2</div>
     <button class="google-btn" onclick="signIn()">
       <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l6-6C34 5.1 29.3 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21 21-9.4 21-21c0-1.4-.1-2.8-.4-4.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 18.9 12 24 12c3.1 0 5.8 1.1 8 3l6-6C34 5.1 29.3 3 24 3 16.3 3 9.7 7.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 45c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 36.2 26.7 37 24 37c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.6 40.6 16.3 45 24 45z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4.1 5.6l6.2 5.2C40.9 36 44 30.6 44 24c0-1.4-.1-2.8-.4-3.5z"/></svg>
       Entrar com Google
@@ -31,8 +42,8 @@
   <div class="hdr">
     <div class="hdr-r1">
       <div>
-        <div class="hdr-title">🎓 Dashboard – 8º Semestre</div>
-        <div class="hdr-sub">MED 117 · UnB · 2026.2</div>
+        <div class="hdr-title">🎓 Dashboard MED 117 — 8º Semestre</div>
+        <div class="hdr-sub">UnB · 2026.2</div>
       </div>
       <div class="hdr-user">
         <div class="sync-wrap"><div class="sync-dot" id="sync-dot"></div><span class="sync-lbl" id="sync-lbl">salvo</span></div>
