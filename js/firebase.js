@@ -60,11 +60,24 @@ function doSignOut() {
 
 // Reautentica via popup só para renovar o token de acesso à Agenda
 // (usado sob demanda quando o usuário clica em "Sincronizar Google Agenda").
+// Usa reauthenticateWithPopup (não signInWithPopup) porque o usuário já está
+// logado — é o método correto do Firebase para pedir um escopo extra a uma
+// sessão existente, e o único que garante um accessToken novo de volta.
 async function ensureGCalToken() {
   if (gcalAccessToken && Date.now() < gcalTokenExpiry) return gcalAccessToken;
-  const result = await auth.signInWithPopup(buildGoogleProvider());
+  if (!currentUser) throw new Error('Você precisa estar logado.');
+  let result;
+  try {
+    result = await currentUser.reauthenticateWithPopup(buildGoogleProvider());
+  } catch (e) {
+    console.error('Erro na reautenticação Google:', e);
+    throw new Error('Não foi possível abrir a janela de autorização do Google (' + (e.code || e.message) + ').');
+  }
   const cred = captureAccessToken(result);
-  if (!cred || !cred.accessToken) throw new Error('Não foi possível obter permissão da Google Agenda.');
+  if (!cred || !cred.accessToken) {
+    console.error('Reautenticação OK mas sem accessToken. Resultado:', result);
+    throw new Error('O Google não devolveu a permissão de acesso à Agenda. Tente de novo e, na janela do Google, confirme a permissão de Google Agenda quando ela aparecer.');
+  }
   return gcalAccessToken;
 }
 
