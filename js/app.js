@@ -28,6 +28,8 @@ function showScreen(which) {
   document.getElementById('loading-screen').style.display = which === 'loading' ? 'flex' : 'none';
   document.getElementById('login-screen').style.display = which === 'login' ? 'flex' : 'none';
   document.getElementById('app').style.display = which === 'app' ? 'block' : 'none';
+  const about = document.getElementById('about-static');
+  if (about) about.style.display = which === 'app' ? 'none' : 'block';
 }
 
 // ── PROGRESSO DO CHECKLIST ───────────────────────────────

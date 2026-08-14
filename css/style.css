@@ -15,9 +15,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* ── LOADING & LOGIN ── */
-#loading-screen, #login-screen{position:fixed;inset:0;background:linear-gradient(135deg,var(--navy),var(--navy-light));display:flex;align-items:center;justify-content:center;z-index:1000;flex-direction:column;gap:16px}
-#login-screen{display:none;padding:24px;z-index:999}
+/* ── LOADING & LOGIN ──
+   Propositalmente NÃO são overlays fixos em tela cheia: precisam ficar em fluxo normal,
+   abaixo do conteúdo estático (#about-static), para que qualquer visitante — inclusive
+   sem estar logado e sem JS — consiga ver a descrição do app e o link da política de
+   privacidade (exigência de verificação do Google OAuth). */
+#loading-screen, #login-screen{width:100%;min-height:60vh;background:linear-gradient(135deg,var(--navy),var(--navy-light));display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px}
+#login-screen{display:none;padding:24px}
 .spinner{width:38px;height:38px;border:3px solid rgba(255,255,255,.2);border-top-color:white;border-radius:50%;animation:spin .8s linear infinite}
 .loading-txt{color:rgba(255,255,255,.5);font-size:.78rem;font-family:'DM Mono',monospace}
 .login-card{text-align:center;color:white;max-width:340px;width:100%}
