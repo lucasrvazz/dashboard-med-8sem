@@ -344,16 +344,55 @@ const TEMPLATE_DISCIPLINES = [
 },
 
 // ────────────────────────────────────────────────────────
-// 7) Medicina Legal — AGUARDANDO EMENTA
+// 7) Medicina Legal e Deontologia
 // ────────────────────────────────────────────────────────
 {
-  id: 'medlegal', label: 'Med Legal', emoji: '⚖️', fullLabel: 'Medicina Legal',
+  id: 'medlegal', label: 'Med Legal', emoji: '⚖️', fullLabel: 'Medicina Legal e Deontologia',
   code: 'não especificado', color: '#475569', fill: '#94a3b8',
   siWeight: 0, passingGrade: 5.0,
-  calcDesc: '⚠️ Ementa ainda não importada — esta disciplina foi criada apenas com o horário semanal fixo (Sexta 10h-12h), para aparecer no calendário. Assim que você tiver o PDF do plano de ensino, use a aba "Importar Ementa" para adicionar os pesos das provas e o conteúdo programático automaticamente.',
-  assessments: [],
-  sections: [],
-  schedule: buildWeeklyPlaceholderSchedule('2026-08-11', '2026-12-08', 5, '10:00', ['2026-09-25', '2026-11-20'], 'Aula (conteúdo a confirmar — importe a ementa)')
+  calcDesc: '⚠️ O plano de ensino enviado traz o cronograma completo, mas só menciona uma única <b>"Avaliação final escrita"</b> (Aula 15, 04/12) — não há detalhamento de outras avaliações, pesos parciais, nota mínima ou frequência mínima no texto recebido. O sistema está considerando essa prova como 100% da nota final e usando 5,0 como nota mínima padrão. A disciplina também participa do Seminário Integrador do 8º semestre (segundo o plano de Ped 2), mas o peso disso não é informado neste documento — se houver, me avise para eu ajustar.',
+  assessments: [
+    { id: 'av_final', label: 'Avaliação Final Escrita (04/12)', weight: 1.0, max: 10 }
+  ],
+  sections: [
+    { title: 'Conteúdo Programático (Avaliação Final)', items: [
+      'Importância da Medicina Legal — Medicina Legal e Direitos Humanos — Estrutura do Laudo Pericial',
+      'Lesões corporais — Classificação segundo art. 129 do Código Penal',
+      'Lesões Corporais Contusas, Incisas, Punctórias, Perfuroincisas e Corto-Contusas',
+      'Lesões Perfurocontusas (projéteis de arma de fogo)',
+      'Tanatologia Forense — Morte encefálica',
+      'Identificação Humana — Genética, Papiloscopia e Antropologia Forenses — Desastres de Massa',
+      'Energias Térmica, Elétrica, Radioativa, Pressórica, Sonora, Luminosa — Asfixiologia Forense',
+      'Sexologia Forense — Lei Maria da Penha — Feminicídio',
+      'Toxicologia Forense — drogas de abuso, álcool, medicamentos psicotrópicos, venenos',
+      'Noções de Psicopatologia Forense',
+      'Sistema jurídico de interesse médico — Constituição, Código Penal, Código Civil, Código de Ética Médica, ECA, CDC, Resolução CNS 466/12',
+      'Perito Oficial, Assistentes Técnicos, Quesitos',
+      'Sigilo Profissional e Publicidade Médica',
+      'Responsabilidade profissional médica — âmbitos Penal, Civil, Ético e Administrativo',
+      'Prevenção de Litígios — Prontuário Médico, negociação/mediação/arbitragem, Consentimento Livre e Esclarecido',
+      'Prontuário digital, assinatura eletrônica e Inteligência Artificial na Medicina'
+    ] }
+  ],
+  schedule: [
+    {date:'2026-08-14', time:'10:00', dur:120, type:'aula', title:'Aula 1 — Importância da Medicina Legal; sistema jurídico brasileiro; Direitos e Garantias Fundamentais'},
+    {date:'2026-08-21', time:'10:00', dur:120, type:'aula', title:'Aula 2 — Direito Médico: Código Penal, CPP, Código Civil, CPC, Código de Ética Médica, CDC, ECA, Res. CNS 466/12'},
+    {date:'2026-08-28', time:'10:00', dur:120, type:'aula', title:'Aula 3 — Prontuário digital, assinatura eletrônica e Inteligência Artificial'},
+    {date:'2026-09-04', time:'10:00', dur:120, type:'aula', title:'Aula 4 — Medicina Legal e Direitos Humanos; estrutura do laudo pericial'},
+    {date:'2026-09-11', time:'10:00', dur:120, type:'aula', title:'Aula 5 — Lesões corporais (art. 129 CP); Perito Oficial, Assistentes Técnicos, Quesitos'},
+    {date:'2026-09-18', time:'10:00', dur:120, type:'aula', title:'Aula 6 — Lesões Contusas, Incisas, Punctórias, Perfuroincisas e Corto-Contusas'},
+    {date:'2026-09-25', type:'evento', title:'Sem aula'},
+    {date:'2026-10-02', time:'10:00', dur:120, type:'aula', title:'Aula 7 — Lesões Perfurocontusas (projéteis de arma de fogo)'},
+    {date:'2026-10-09', time:'10:00', dur:120, type:'aula', title:'Aula 8 — Tanatologia Forense; morte encefálica'},
+    {date:'2026-10-16', time:'10:00', dur:120, type:'aula', title:'Aula 9 — Identificação Humana: Genética, Papiloscopia, Antropologia Forense; desastres de massa'},
+    {date:'2026-10-23', time:'10:00', dur:120, type:'aula', title:'Aula 10 — Energias (térmica, elétrica, radioativa, pressórica, sonora, luminosa); Asfixiologia'},
+    {date:'2026-10-30', time:'10:00', dur:120, type:'aula', title:'Aula 11 — Sexologia Forense; Lei Maria da Penha; Feminicídio'},
+    {date:'2026-11-06', time:'10:00', dur:120, type:'aula', title:'Aula 12 — Toxicologia Forense: drogas de abuso, álcool, medicamentos, venenos'},
+    {date:'2026-11-13', time:'10:00', dur:120, type:'aula', title:'Aula 13 — Noções de Psicopatologia Forense'},
+    {date:'2026-11-20', type:'evento', title:'Feriado Nacional — sem aula'},
+    {date:'2026-11-27', time:'10:00', dur:120, type:'aula', title:'Aula 14 — Responsabilidade médica (Penal/Civil/Ética/Administrativa); Sigilo Profissional; Publicidade Médica'},
+    {date:'2026-12-04', time:'10:00', dur:120, type:'prova', title:'Aula 15 — Prevenção de Litígios; Consentimento Livre e Esclarecido + AVALIAÇÃO FINAL ESCRITA', assessmentId:'av_final'}
+  ]
 }
 
 ];
