@@ -69,6 +69,15 @@ function ensureGCalToken() {
         reject(new Error('O Google recusou a permissão (' + resp.error + '). Tente de novo e aceite a permissão da Google Agenda na janela que abrir.'));
         return;
       }
+      // O Google pode devolver um token "válido" mas sem o escopo da Agenda,
+      // se a caixinha dessa permissão não foi marcada na tela de consentimento.
+      // Detectamos isso aqui, antes de tentar usar o token, para dar um aviso claro.
+      const grantedScopes = (resp.scope || '').split(' ');
+      if (!grantedScopes.includes(GCAL_SCOPE_EVENTS)) {
+        console.error('Token obtido sem o escopo da Agenda. Escopos concedidos:', resp.scope);
+        reject(new Error('Você não marcou a permissão da Google Agenda na tela do Google. Clique em "Sincronizar" de novo e, na janela que abrir, procure e marque a caixinha "Ver, editar, compartilhar e excluir eventos da sua Google Agenda" antes de continuar.'));
+        return;
+      }
       gcalAccessToken = resp.access_token;
       gcalTokenExpiry = Date.now() + (resp.expires_in - 60) * 1000;
       resolve(gcalAccessToken);
