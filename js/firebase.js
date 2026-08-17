@@ -21,33 +21,8 @@ db.enablePersistence().catch(() => {});
 
 const FIRESTORE_DOC = 'data_8sem'; // documento separado do dashboard do 7º semestre
 
-// Escopos extras solicitados no login para poder ler/escrever na
-// Google Agenda do próprio usuário (ver README.md para configuração
-// necessária no Google Cloud Console: ativar Calendar API + consent screen).
-const GCAL_SCOPE_EVENTS = 'https://www.googleapis.com/auth/calendar.events';
-
-let gcalAccessToken = null;
-let gcalTokenExpiry = 0;
-
-function buildGoogleProvider() {
-  const provider = new firebase.auth.GoogleAuthProvider();
-  provider.addScope(GCAL_SCOPE_EVENTS);
-  provider.setCustomParameters({ prompt: 'select_account' });
-  return provider;
-}
-
-function captureAccessToken(result) {
-  const cred = firebase.auth.GoogleAuthProvider.credentialFromResult(result);
-  if (cred && cred.accessToken) {
-    gcalAccessToken = cred.accessToken;
-    gcalTokenExpiry = Date.now() + 55 * 60 * 1000; // tokens do Google Identity duram ~1h
-  }
-  return cred;
-}
-
 function signIn() {
-  auth.signInWithPopup(buildGoogleProvider())
-    .then(captureAccessToken)
+  auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
     .catch(e => alert('Erro ao entrar: ' + e.message));
 }
 
@@ -58,27 +33,48 @@ function doSignOut() {
   }
 }
 
-// Reautentica via popup só para renovar o token de acesso à Agenda
-// (usado sob demanda quando o usuário clica em "Sincronizar Google Agenda").
-// Usa reauthenticateWithPopup (não signInWithPopup) porque o usuário já está
-// logado — é o método correto do Firebase para pedir um escopo extra a uma
-// sessão existente, e o único que garante um accessToken novo de volta.
-async function ensureGCalToken() {
-  if (gcalAccessToken && Date.now() < gcalTokenExpiry) return gcalAccessToken;
-  if (!currentUser) throw new Error('Você precisa estar logado.');
-  let result;
-  try {
-    result = await currentUser.reauthenticateWithPopup(buildGoogleProvider());
-  } catch (e) {
-    console.error('Erro na reautenticação Google:', e);
-    throw new Error('Não foi possível abrir a janela de autorização do Google (' + (e.code || e.message) + ').');
+// ── PERMISSÃO DA GOOGLE AGENDA (Google Identity Services) ──────
+// Pedida separadamente do login, só quando o usuário clica em "Sincronizar
+// Google Agenda". Usamos a biblioteca do próprio Google (não o Firebase Auth)
+// porque pedir esse escopo extra a uma sessão já logada pelo Firebase se
+// mostrou pouco confiável (o Firebase às vezes não devolve o token de acesso).
+const GCAL_SCOPE_EVENTS = 'https://www.googleapis.com/auth/calendar.events';
+const GOOGLE_WEB_CLIENT_ID = '829528262319-gv0o3ir63r0vpgujhv84761vhmldmpuh.apps.googleusercontent.com';
+
+let gcalAccessToken = null;
+let gcalTokenExpiry = 0;
+let gisTokenClient = null;
+
+function getGisTokenClient() {
+  if (typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
+    throw new Error('A biblioteca do Google ainda não carregou. Recarregue a página e tente de novo.');
   }
-  const cred = captureAccessToken(result);
-  if (!cred || !cred.accessToken) {
-    console.error('Reautenticação OK mas sem accessToken. Resultado:', result);
-    throw new Error('O Google não devolveu a permissão de acesso à Agenda. Tente de novo e, na janela do Google, confirme a permissão de Google Agenda quando ela aparecer.');
+  if (!gisTokenClient) {
+    gisTokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: GOOGLE_WEB_CLIENT_ID,
+      scope: GCAL_SCOPE_EVENTS,
+      callback: () => {} // sobrescrito a cada chamada de ensureGCalToken()
+    });
   }
-  return gcalAccessToken;
+  return gisTokenClient;
+}
+
+function ensureGCalToken() {
+  if (gcalAccessToken && Date.now() < gcalTokenExpiry) return Promise.resolve(gcalAccessToken);
+  return new Promise((resolve, reject) => {
+    let client;
+    try { client = getGisTokenClient(); } catch (e) { reject(e); return; }
+    client.callback = (resp) => {
+      if (resp.error) {
+        reject(new Error('O Google recusou a permissão (' + resp.error + '). Tente de novo e aceite a permissão da Google Agenda na janela que abrir.'));
+        return;
+      }
+      gcalAccessToken = resp.access_token;
+      gcalTokenExpiry = Date.now() + (resp.expires_in - 60) * 1000;
+      resolve(gcalAccessToken);
+    };
+    client.requestAccessToken(currentUser && currentUser.email ? { hint: currentUser.email } : {});
+  });
 }
 
 async function loadFromFirestore() {
