@@ -191,6 +191,11 @@ async function gcalFetch(token, url, opts) {
   const resp = await fetch(url, { ...opts, headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json', ...(opts && opts.headers) } });
   if (!resp.ok) {
     const body = await resp.text();
+    // Se a API reclamar de escopo, mostramos quais permissões o token realmente
+    // recebeu (capturado no login), para diagnóstico direto na tela.
+    if (resp.status === 403 && /scope|permission/i.test(body)) {
+      throw new Error(`403 (escopo insuficiente). Permissões que o token realmente recebeu: [${window.__lastGcalScope || 'desconhecido'}]. Se a permissão da Agenda não estiver nessa lista, o escopo não está sendo concedido/registrado no Google Cloud.`);
+    }
     throw new Error(`Google Agenda API ${resp.status}: ${body.slice(0, 200)}`);
   }
   return resp.status === 204 ? null : resp.json();
