@@ -73,7 +73,11 @@ function ensureGCalToken() {
       gcalTokenExpiry = Date.now() + (resp.expires_in - 60) * 1000;
       resolve(gcalAccessToken);
     };
-    client.requestAccessToken(currentUser && currentUser.email ? { hint: currentUser.email } : {});
+    // prompt:'consent' força o Google a sempre mostrar a tela pedindo a
+    // permissão da Agenda, em vez de reaproveitar silenciosamente uma
+    // autorização antiga que não tinha esse escopo (causa do erro 403
+    // "insufficient authentication scopes").
+    client.requestAccessToken({ prompt: 'consent', ...(currentUser && currentUser.email ? { hint: currentUser.email } : {}) });
   });
 }
 
