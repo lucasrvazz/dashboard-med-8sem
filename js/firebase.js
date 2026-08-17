@@ -69,18 +69,37 @@ function ensureGCalToken() {
         reject(new Error('O Google recusou a permissão (' + resp.error + '). Tente de novo e aceite a permissão da Google Agenda na janela que abrir.'));
         return;
       }
-      // O Google pode devolver um token "válido" mas sem o escopo da Agenda,
-      // se a caixinha dessa permissão não foi marcada na tela de consentimento.
-      // Detectamos isso aqui, antes de tentar usar o token, para dar um aviso claro.
-      const grantedScopes = (resp.scope || '').split(' ');
-      if (!grantedScopes.includes(GCAL_SCOPE_EVENTS)) {
-        console.error('Token obtido sem o escopo da Agenda. Escopos concedidos:', resp.scope);
-        reject(new Error('Você não marcou a permissão da Google Agenda na tela do Google. Clique em "Sincronizar" de novo e, na janela que abrir, procure e marque a caixinha "Ver, editar, compartilhar e excluir eventos da sua Google Agenda" antes de continuar.'));
-        return;
-      }
-      gcalAccessToken = resp.access_token;
-      gcalTokenExpiry = Date.now() + (resp.expires_in - 60) * 1000;
-      resolve(gcalAccessToken);
+      // O que o Google DIZ que concedeu (resp.scope) nem sempre é o que o token
+      // REALMENTE carrega. Por isso confirmamos direto na fonte, consultando o
+      // tokeninfo do Google — assim distinguimos "usuário não marcou a permissão"
+      // de "escopo não registrado no app OAuth" (escopo é removido do token).
+      const claimedScopes = (resp.scope || '').split(' ');
+      console.log('Escopos que o Google diz ter concedido:', resp.scope);
+      fetch('https://oauth2.googleapis.com/tokeninfo?access_token=' + encodeURIComponent(resp.access_token))
+        .then(r => r.json())
+        .then(info => {
+          const realScopes = (info.scope || '').split(' ');
+          console.log('Escopos REAIS do token (via tokeninfo):', info.scope);
+          if (!realScopes.includes(GCAL_SCOPE_EVENTS)) {
+            if (claimedScopes.includes(GCAL_SCOPE_EVENTS)) {
+              // Google mostrou a permissão e você aceitou, mas o token saiu sem ela:
+              // sinal clássico de escopo NÃO registrado em "Acesso a dados" do app OAuth.
+              reject(new Error('O escopo da Google Agenda não está registrado no seu app OAuth. No Google Cloud Console → APIs e Serviços → Google Auth Platform → "Acesso a dados" (Data Access), adicione o escopo https://www.googleapis.com/auth/calendar.events e salve. Sem isso, o Google remove a permissão do token mesmo você aceitando.'));
+            } else {
+              reject(new Error('Você não marcou a permissão da Google Agenda na tela do Google. Clique em "Sincronizar" de novo e marque a caixinha da Google Agenda antes de continuar.'));
+            }
+            return;
+          }
+          gcalAccessToken = resp.access_token;
+          gcalTokenExpiry = Date.now() + (resp.expires_in - 60) * 1000;
+          resolve(gcalAccessToken);
+        })
+        .catch(() => {
+          // Se o tokeninfo falhar (rede), seguimos com o token mesmo — a API dirá se falta escopo.
+          gcalAccessToken = resp.access_token;
+          gcalTokenExpiry = Date.now() + (resp.expires_in - 60) * 1000;
+          resolve(gcalAccessToken);
+        });
     };
     // prompt:'consent' força o Google a sempre mostrar a tela pedindo a
     // permissão da Agenda, em vez de reaproveitar silenciosamente uma
