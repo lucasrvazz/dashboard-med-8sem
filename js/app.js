@@ -57,10 +57,14 @@ function renderAll() {
       html += `<div class="panel ${activeTab === d.id ? 'active' : ''}" id="panel-${d.id}">${activeTab === d.id ? renderDiscPanel(d) : ''}</div>`;
     });
     html += `<div class="panel ${activeTab === 'calendario' ? 'active' : ''}" id="panel-calendario">${activeTab === 'calendario' ? renderCalendarTab() : ''}</div>`;
+    html += `<div class="panel ${activeTab === 'provas' ? 'active' : ''}" id="panel-provas">${activeTab === 'provas' ? renderProvasTab() : ''}</div>`;
     panels.innerHTML = html;
 
     if (activeTab === 'calendario' && calendarCurrentView !== 'provas') {
       requestAnimationFrame(initFullCalendarIfNeeded);
+    }
+    if (activeTab === 'provas' && provasTabView === 'calendario') {
+      requestAnimationFrame(initProvasCalendarIfNeeded);
     }
   } catch (err) {
     console.error('Erro fatal na renderização:', err);
@@ -72,7 +76,8 @@ function renderTabs() {
   const all = [
     { id: 'resumo', label: 'Dashboard', emoji: '📊', color: 'var(--navy)' },
     ...userDisciplines.map(d => ({ id: d.id, label: d.label, emoji: d.emoji, color: d.color })),
-    { id: 'calendario', label: 'Calendário', emoji: '📅', color: 'var(--indigo)' }
+    { id: 'calendario', label: 'Calendário', emoji: '📅', color: 'var(--indigo)' },
+    { id: 'provas', label: 'Provas', emoji: '📝', color: 'var(--rose)' }
   ];
   document.getElementById('tabs').innerHTML = all.map(t => {
     const active = t.id === activeTab ? 'active' : '';

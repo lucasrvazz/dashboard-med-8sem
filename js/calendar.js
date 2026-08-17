@@ -5,10 +5,13 @@
 // ══════════════════════════════════════════════════════════
 
 const GCAL_APP_CALENDAR_NAME = '🎓 Medicina 8º Sem — 117';
+const GCAL_PROVAS_CALENDAR_NAME = '📝 Provas — Medicina 8º Sem — 117';
 
 let calendarInstance = null;
 let calendarFilters = {};   // disciplineId -> bool (visível?)
 let calendarCurrentView = 'mes';
+let provasCalendarInstance = null;
+let provasTabView = 'lista'; // 'lista' | 'calendario'
 
 // O ambulatório de Ped 2 é semanal e cada aluno escolhe UM dia (terça, quinta ou sexta) —
 // por isso não fica numa lista fixa de datas em data.js, e sim gerado aqui a partir da
@@ -109,6 +112,64 @@ function renderCalendarTab() {
   `;
 }
 
+// ── ABA "PROVAS" — só as avaliações, sempre lidas ao vivo de buildAllEvents(),
+// então qualquer data de prova que mude em data.js (ou nas geradas dinamicamente)
+// aparece aqui automaticamente, sem precisar duplicar nada. ──
+function renderProvasTab() {
+  userDisciplines.forEach(d => { if (calendarFilters[d.id] === undefined) calendarFilters[d.id] = true; });
+
+  const chips = userDisciplines.map(d => {
+    const on = calendarFilters[d.id] !== false;
+    return `<div class="cal-chip ${on ? 'on' : ''}" style="${on ? `background:${d.color};border-color:${d.color}` : ''}" onclick="toggleCalFilter('${d.id}')">${d.emoji} ${d.label}</div>`;
+  }).join('');
+
+  const views = [{ id: 'lista', label: 'Lista' }, { id: 'calendario', label: 'Calendário' }];
+  const viewBtns = views.map(v => `<button class="cal-view-btn ${provasTabView === v.id ? 'active' : ''}" onclick="setProvasTabView('${v.id}')">${v.label}</button>`).join('');
+
+  const count = buildAllEvents().filter(e => e.extendedProps.type === 'prova' && calendarFilters[e.extendedProps.disciplineId] !== false).length;
+
+  return `
+    <div class="dash-title" style="margin-bottom:14px">📝 Provas do Semestre</div>
+    <div class="info-box">Só as avaliações — nada de aula ou estágio. Essa lista atualiza sozinha sempre que uma data de prova mudar em qualquer disciplina. "Sincronizar" aqui cria/atualiza uma Google Agenda separada, só com provas ("${GCAL_PROVAS_CALENDAR_NAME}"), sem misturar com o resto do cronograma.</div>
+    <div class="cal-toolbar">
+      <div class="cal-filters">${chips}</div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <div class="cal-view-switch">${viewBtns}</div>
+        <button class="gcal-btn" id="gcal-provas-sync-btn" onclick="syncProvasToGoogleCalendar()">🗓️ Sincronizar só as Provas</button>
+      </div>
+    </div>
+    <div class="gcal-status" id="gcal-provas-status" style="margin-bottom:12px"></div>
+    <div style="font-size:.78rem;color:var(--slate);margin-bottom:10px">${count} prova${count === 1 ? '' : 's'} cadastrada${count === 1 ? '' : 's'} para as disciplinas selecionadas.</div>
+    <div id="provas-calendar-el" style="display:${provasTabView === 'calendario' ? 'block' : 'none'}"></div>
+    <div id="provas-lista-wrap" style="display:${provasTabView === 'lista' ? 'block' : 'none'}">${provasTabView === 'lista' ? renderProvasTable() : ''}</div>
+  `;
+}
+
+function setProvasTabView(view) {
+  provasTabView = view;
+  renderAll();
+}
+
+function initProvasCalendarIfNeeded() {
+  const el = document.getElementById('provas-calendar-el');
+  if (!el || typeof FullCalendar === 'undefined') return;
+  if (provasCalendarInstance) { provasCalendarInstance.destroy(); provasCalendarInstance = null; }
+  const provaEvents = getFilteredEvents().filter(e => e.extendedProps.type === 'prova');
+  provasCalendarInstance = new FullCalendar.Calendar(el, {
+    initialView: 'dayGridMonth',
+    height: 'auto',
+    locale: 'pt-br',
+    firstDay: 1,
+    headerToolbar: { left: 'prev,next today', center: 'title', right: '' },
+    events: provaEvents,
+    eventClick: function (info) {
+      const p = info.event.extendedProps;
+      alert(`${p.disciplineEmoji} ${p.disciplineLabel}\n${p.rawTitle}\n📅 ${p.dateRaw}`);
+    }
+  });
+  provasCalendarInstance.render();
+}
+
 function initFullCalendarIfNeeded() {
   const el = document.getElementById('calendar-el');
   if (!el || typeof FullCalendar === 'undefined') return;
@@ -201,13 +262,13 @@ async function gcalFetch(token, url, opts) {
   return resp.status === 204 ? null : resp.json();
 }
 
-async function getOrCreateAppCalendar(token) {
+async function getOrCreateCalendarByName(token, calendarName) {
   const list = await gcalFetch(token, 'https://www.googleapis.com/calendar/v3/users/me/calendarList');
-  const existing = (list.items || []).find(c => c.summary === GCAL_APP_CALENDAR_NAME);
+  const existing = (list.items || []).find(c => c.summary === calendarName);
   if (existing) return existing.id;
   const created = await gcalFetch(token, 'https://www.googleapis.com/calendar/v3/calendars', {
     method: 'POST',
-    body: JSON.stringify({ summary: GCAL_APP_CALENDAR_NAME, description: 'Criado automaticamente pelo Dashboard MED 117 (8º semestre). Pode excluir esta agenda a qualquer momento nas configurações da Google Agenda.' })
+    body: JSON.stringify({ summary: calendarName, description: 'Criado automaticamente pelo Dashboard MED 117 (8º semestre). Pode excluir esta agenda a qualquer momento nas configurações da Google Agenda.' })
   });
   return created.id;
 }
@@ -238,27 +299,38 @@ async function upsertGCalEvent(token, calendarId, ev) {
   }
 }
 
-async function syncToGoogleCalendar(onlyDisciplineId) {
-  const btn = document.getElementById('gcal-sync-btn');
-  const statusEl = document.getElementById('gcal-status');
+// Função genérica reaproveitada tanto pelo botão "Sincronizar Google Agenda"
+// (todo o cronograma) quanto por "Sincronizar só as Provas" (agenda separada).
+async function runGCalSync(events, calendarName, btnId, statusElId) {
+  const btn = document.getElementById(btnId);
+  const statusEl = document.getElementById(statusElId);
   try {
     if (btn) btn.disabled = true;
     if (statusEl) statusEl.textContent = 'Conectando à Google Agenda (autorize o acesso na janela do Google)...';
     const token = await ensureGCalToken();
-    const calendarId = await getOrCreateAppCalendar(token);
-    let events = getFilteredEvents();
-    if (onlyDisciplineId) events = events.filter(e => e.extendedProps.disciplineId === onlyDisciplineId);
+    const calendarId = await getOrCreateCalendarByName(token, calendarName);
     let done = 0;
     for (const ev of events) {
       await upsertGCalEvent(token, calendarId, ev);
       done++;
       if (statusEl) statusEl.textContent = `Sincronizando... ${done}/${events.length}`;
     }
-    if (statusEl) statusEl.textContent = `✅ ${done} eventos sincronizados com "${GCAL_APP_CALENDAR_NAME}" na sua Google Agenda.`;
+    if (statusEl) statusEl.textContent = `✅ ${done} eventos sincronizados com "${calendarName}" na sua Google Agenda.`;
   } catch (e) {
     console.error(e);
     if (statusEl) statusEl.textContent = '❌ ' + e.message + ' — veja o README para configurar a Calendar API no Google Cloud Console.';
   } finally {
     if (btn) btn.disabled = false;
   }
+}
+
+function syncToGoogleCalendar(onlyDisciplineId) {
+  let events = getFilteredEvents();
+  if (onlyDisciplineId) events = events.filter(e => e.extendedProps.disciplineId === onlyDisciplineId);
+  return runGCalSync(events, GCAL_APP_CALENDAR_NAME, 'gcal-sync-btn', 'gcal-status');
+}
+
+function syncProvasToGoogleCalendar() {
+  const events = getFilteredEvents().filter(e => e.extendedProps.type === 'prova');
+  return runGCalSync(events, GCAL_PROVAS_CALENDAR_NAME, 'gcal-provas-sync-btn', 'gcal-provas-status');
 }
