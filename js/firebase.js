@@ -38,7 +38,10 @@ function doSignOut() {
 // Google Agenda". Usamos a biblioteca do próprio Google (não o Firebase Auth)
 // porque pedir esse escopo extra a uma sessão já logada pelo Firebase se
 // mostrou pouco confiável (o Firebase às vezes não devolve o token de acesso).
-const GCAL_SCOPE_EVENTS = 'https://www.googleapis.com/auth/calendar.events';
+// Usamos o escopo "calendar" (completo) em vez de "calendar.events", porque
+// o app também precisa LISTAR agendas e CRIAR uma agenda nova (calendarList,
+// calendars.insert) — operações que "calendar.events" (só eventos) não cobre.
+const GCAL_SCOPE_EVENTS = 'https://www.googleapis.com/auth/calendar';
 const GOOGLE_WEB_CLIENT_ID = '829528262319-gv0o3ir63r0vpgujhv84761vhmldmpuh.apps.googleusercontent.com';
 
 let gcalAccessToken = null;
