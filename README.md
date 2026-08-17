@@ -4,7 +4,7 @@ Site estático (sem servidor próprio) para acompanhar as 5 disciplinas do 8º s
 
 Disciplinas já carregadas a partir dos planos de ensino oficiais: **UE-PED** (Urgência e Emergência em Pediatria 3), **SFC 5**, **Psicomed 8**, **Ped 2** (Saúde da Criança e do Adolescente 2) e **Cirurgia 2** (Saúde do Adulto Cir II).
 
-> ⚠️ **Cirurgia 2**: o cronograma oficial não trazia os pesos das 3 provas nem a nota mínima — o site está usando 33,3% para cada prova como estimativa até você atualizar com o plano de ensino completo (pela aba "Importar Ementa").
+> ⚠️ **Cirurgia 2**: o cronograma oficial não trazia os pesos das 3 provas nem a nota mínima — o site está usando 33,3% para cada prova como estimativa até você atualizar com o plano de ensino completo (edite `js/data.js`).
 > Algumas datas nos documentos originais têm pequenas inconsistências (ex.: datas de término que não batem com o cronograma) — foram reproduzidas como constam nos PDFs, sem correção.
 
 ---
@@ -46,15 +46,9 @@ A sincronização usa o mesmo login do Firebase, pedindo também a permissão `c
 
 ---
 
-## 4. Gemini (importar ementas em PDF automaticamente)
+## 4. Gemini (importar ementas em PDF automaticamente) — desativado por enquanto
 
-Cada pessoa usa **sua própria chave de API**, gratuita:
-
-1. Acesse [aistudio.google.com/apikey](https://aistudio.google.com/apikey) e gere uma chave.
-2. No site, vá na aba **"Importar Ementa"**, cole a chave (fica salva só no seu navegador — `localStorage`, nunca sai do seu computador exceto para chamar a própria API do Google).
-3. Arraste o PDF do plano de ensino da nova disciplina. O Gemini lê o documento inteiro e devolve a composição de notas, o conteúdo programático e o cronograma já estruturados — você confere e clica em "Adicionar disciplina".
-
-**Atenção de segurança:** como este é um site estático (sem backend), a chave do Gemini trafega diretamente do navegador para a API do Google. Isso é seguro para uso pessoal, mas se for compartilhar o link publicamente, restrinja a chave no [Google Cloud Console](https://console.cloud.google.com/apis/credentials) por referenciador HTTP (HTTP referrer), limitando-a ao domínio do seu GitHub Pages.
+A aba "Importar Ementa" (upload de PDF → Gemini → disciplina estruturada automaticamente) foi **desativada temporariamente** — o código continua em `js/gemini.js`, só não está sendo carregado pelo `index.html`. Pra reativar: descomente a linha do `<script src="js/gemini.js">` no `index.html` e adicione de volta o item `{ id: 'importar', ... }` na lista de abas em `js/app.js` (função `renderTabs`).
 
 ---
 
@@ -96,4 +90,4 @@ js/gemini.js           upload de PDF → Gemini → nova disciplina estruturada
 js/app.js              estado geral, abas, painéis, checklist
 ```
 
-Para editar pesos de nota, conteúdo de prova ou datas de uma disciplina já existente, edite diretamente `js/data.js` (ou use "Importar Ementa" para reprocessar o PDF atualizado).
+Para editar pesos de nota, conteúdo de prova ou datas de uma disciplina já existente, edite diretamente `js/data.js`.

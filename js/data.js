@@ -283,7 +283,7 @@ const TEMPLATE_DISCIPLINES = [
   id: 'cir2', label: 'Cirurgia 2', emoji: '🔪', fullLabel: 'Saúde do Adulto — Cirurgia II',
   code: 'não especificado', color: '#d97706', fill: '#fbbf24',
   siWeight: 0, passingGrade: 5.0,
-  calcDesc: '⚠️ O cronograma oficial desta disciplina não informa os pesos de cada prova nem a nota mínima de aprovação — apenas as datas. O sistema está usando <b>divisão igualitária (33,3% cada)</b> entre as 3 provas como estimativa provisória. Atualize os pesos reais assim que a coordenação divulgar o plano de ensino completo (use "Importar Ementa" para reprocessar quando tiver o PDF).',
+  calcDesc: '⚠️ O cronograma oficial desta disciplina não informa os pesos de cada prova nem a nota mínima de aprovação — apenas as datas. O sistema está usando <b>divisão igualitária (33,3% cada)</b> entre as 3 provas como estimativa provisória. Atualize os pesos reais assim que a coordenação divulgar o plano de ensino completo (edite diretamente em js/data.js).',
   assessments: [
     { id: 'prova_ortoped_oftalmo', label: 'Prova Ortopedia/Oftalmologia (30/11)', weight: 0.3334, max: 10 },
     { id: 'prova_anestesia', label: 'Prova de Anestesia (07/12)', weight: 0.3333, max: 10 },
@@ -337,7 +337,7 @@ const TEMPLATE_DISCIPLINES = [
   id: 'uecir', label: 'UE-Cir', emoji: '🚨', fullLabel: 'Urgência e Emergência — Cirurgia',
   code: 'não especificado', color: '#be185d', fill: '#f472b6',
   siWeight: 0, passingGrade: 5.0,
-  calcDesc: '⚠️ Ementa ainda não importada — esta disciplina foi criada apenas com o horário semanal fixo (Quarta 08h-10h), para aparecer no calendário. Assim que você tiver o PDF do plano de ensino, use a aba "Importar Ementa" para adicionar os pesos das provas e o conteúdo programático automaticamente.',
+  calcDesc: '⚠️ Ementa ainda não cadastrada — esta disciplina foi criada apenas com o horário semanal fixo (Quarta 08h-10h), para aparecer no calendário. Assim que você tiver o plano de ensino, me manda o conteúdo que eu adiciono os pesos das provas e o conteúdo programático.',
   assessments: [],
   sections: [],
   schedule: buildWeeklyPlaceholderSchedule('2026-08-11', '2026-12-08', 3, '08:00', ['2026-09-23'], 'Aula (conteúdo a confirmar — importe a ementa)')

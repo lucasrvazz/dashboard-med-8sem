@@ -57,7 +57,6 @@ function renderAll() {
       html += `<div class="panel ${activeTab === d.id ? 'active' : ''}" id="panel-${d.id}">${activeTab === d.id ? renderDiscPanel(d) : ''}</div>`;
     });
     html += `<div class="panel ${activeTab === 'calendario' ? 'active' : ''}" id="panel-calendario">${activeTab === 'calendario' ? renderCalendarTab() : ''}</div>`;
-    html += `<div class="panel ${activeTab === 'importar' ? 'active' : ''}" id="panel-importar">${activeTab === 'importar' ? renderImportTab() : ''}</div>`;
     panels.innerHTML = html;
 
     if (activeTab === 'calendario' && calendarCurrentView !== 'provas') {
@@ -73,8 +72,7 @@ function renderTabs() {
   const all = [
     { id: 'resumo', label: 'Dashboard', emoji: '📊', color: 'var(--navy)' },
     ...userDisciplines.map(d => ({ id: d.id, label: d.label, emoji: d.emoji, color: d.color })),
-    { id: 'calendario', label: 'Calendário', emoji: '📅', color: 'var(--indigo)' },
-    { id: 'importar', label: 'Importar Ementa', emoji: '📥', color: 'var(--teal)' }
+    { id: 'calendario', label: 'Calendário', emoji: '📅', color: 'var(--indigo)' }
   ];
   document.getElementById('tabs').innerHTML = all.map(t => {
     const active = t.id === activeTab ? 'active' : '';
