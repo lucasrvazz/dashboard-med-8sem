@@ -241,6 +241,17 @@ function renderResumo() {
   `;
 }
 
+// Sub-aba ativa dentro de cada disciplina (uma entrada por disciplina, assim
+// trocar de matéria não perde o lugar em que você estava em cada uma).
+let discSubTabs = {};
+const DISC_SUBTABS = [
+  { id: 'notas', label: '📊 Notas' },
+  { id: 'cronograma', label: '📅 Cronograma' },
+  { id: 'faltas', label: '📋 Faltas' },
+  { id: 'conteudo', label: '✅ Conteúdo' }
+];
+function setDiscSubTab(dId, tab) { discSubTabs[dId] = tab; renderAll(); }
+
 function renderDiscPanel(d) {
   const grades = getSubjectGrades(d.id);
   const m = calcSubjectMetrics(d.id);
@@ -252,13 +263,10 @@ function renderDiscPanel(d) {
     </div>`).join('');
 
   const sectionsHtml = (d.sections || []).map((s, si) => renderSection(d, s, si)).join('');
+  const subTab = discSubTabs[d.id] || 'notas';
+  const subTabsHtml = DISC_SUBTABS.map(t => `<button class="disc-subtab ${subTab === t.id ? 'active' : ''}" style="--tab-color:${d.color}" onclick="setDiscSubTab('${d.id}','${t.id}')">${t.label}</button>`).join('');
 
-  return `
-    <div class="disc-header">
-      <div class="disc-title" style="color:${d.color}; font-size:1.4rem">${d.emoji} ${d.fullLabel}</div>
-      ${d.code ? `<span style="color:var(--slate);font-size:.78rem;font-family:'DM Mono',monospace">${d.code}</span>` : ''}
-    </div>
-
+  const notasHtml = `
     <div class="grades-input-panel">
       ${d.calcDesc ? `<div class="calc-info-box"><strong>ℹ️ Como funciona a nota:</strong> ${d.calcDesc}</div>` : ''}
       ${inputsHtml}
@@ -269,22 +277,31 @@ function renderDiscPanel(d) {
         ${renderGradeBar(m)}
         <div style="text-align:right; margin-top:8px"><span class="st-badge ${m.cls}">${m.status}</span></div>
       </div>
-    </div>
+    </div>`;
 
+  const cronogramaHtml = `
     ${d.id === 'ped2' ? renderAmbulatorioPicker() : ''}
     ${d.id === 'cir2' ? renderOftalmoPicker() : ''}
     ${d.id === 'psicomed8' ? renderPsicomedPicker() : ''}
-
     <div class="dash-title">📅 Próximas aulas e provas</div>
     ${renderDisciplineAgenda(d)}
     <div style="margin-bottom:20px">
       <button class="gcal-btn" onclick="syncToGoogleCalendar('${d.id}')">🗓️ Sincronizar só esta disciplina com a Google Agenda</button>
       <span class="gcal-status" id="gcal-status" style="margin-left:10px"></span>
+    </div>`;
+
+  const faltasHtml = renderFaltasSection(d);
+  const conteudoHtml = sectionsHtml || `<div class="agenda-empty">Sem conteúdo/checklist cadastrado ainda para esta disciplina.</div>`;
+
+  const bodyBySubTab = { notas: notasHtml, cronograma: cronogramaHtml, faltas: faltasHtml, conteudo: conteudoHtml };
+
+  return `
+    <div class="disc-header">
+      <div class="disc-title" style="color:${d.color}; font-size:1.4rem">${d.emoji} ${d.fullLabel}</div>
+      ${d.code ? `<span style="color:var(--slate);font-size:.78rem;font-family:'DM Mono',monospace">${d.code}</span>` : ''}
     </div>
-
-    ${renderFaltasSection(d)}
-
-    ${sectionsHtml}
+    <div class="disc-subtabs">${subTabsHtml}</div>
+    <div class="disc-subtab-body">${bodyBySubTab[subTab] || ''}</div>
   `;
 }
 

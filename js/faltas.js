@@ -10,11 +10,12 @@
 const FALTA_TYPES_COUNT = new Set(['aula', 'seminario', 'estagio', 'prova', 'reposicao']);
 const FALTA_LIMIT_PCT = 0.25;
 
-// Chave estável de um evento no cronograma (para armazenar quem faltou):
-// junta data, horário e um pedaço do título — resistente a pequenas
-// reordenações do array, mas invalida se o título mudar muito.
-function faltaKeyFor(ev) {
-  return `${ev.date}|${ev.time || 'ad'}|${(ev.title || '').slice(0, 40)}`;
+// Chave estável de um evento (data+horário+posição no array ordenado).
+// Só usa caracteres alfanuméricos/hífen/underscore de propósito — essa chave
+// vai direto num atributo HTML (onchange="..."), então texto livre do título
+// (que pode ter aspas, acentos etc.) quebraria o HTML.
+function faltaKeyFor(ev, idx) {
+  return `${ev.date}_${(ev.time || 'ad').replace(':', '')}_${idx}`;
 }
 
 // Reúne todos os eventos "que contam para carga horária" de uma disciplina,
@@ -42,10 +43,10 @@ function calcFaltasStats(d) {
   const events = faltaEventsFor(d);
   const absMap = getDisciplineAbsenceMap(d.id);
   let totalMin = 0, absentMin = 0;
-  events.forEach(ev => {
+  events.forEach((ev, idx) => {
     const dur = ev.dur || 60;
     totalMin += dur;
-    if (absMap[faltaKeyFor(ev)]) absentMin += dur;
+    if (absMap[faltaKeyFor(ev, idx)]) absentMin += dur;
   });
   const totalH = totalMin / 60;
   const absentH = absentMin / 60;
@@ -63,9 +64,14 @@ function calcFaltasStats(d) {
   return { totalH, absentH, maxAbsentH, remainingH, pct, statusCls, statusMsg, events };
 }
 
+// Lembra se a lista de aulas está expandida por disciplina, pra não fechar
+// sozinha toda vez que uma falta é marcada/desmarcada (o que re-renderiza a página).
+let faltasListOpen = {};
+
 function toggleFalta(disciplineId, key) {
   const absMap = getDisciplineAbsenceMap(disciplineId);
   if (absMap[key]) delete absMap[key]; else absMap[key] = true;
+  faltasListOpen[disciplineId] = true;
   scheduleSave();
   renderAll();
 }
@@ -80,8 +86,8 @@ function renderFaltasSection(d) {
   const absMap = getDisciplineAbsenceMap(d.id);
   const today = new Date().toISOString().slice(0, 10);
 
-  const rows = s.events.map(ev => {
-    const key = faltaKeyFor(ev);
+  const rows = s.events.map((ev, idx) => {
+    const key = faltaKeyFor(ev, idx);
     const faltou = !!absMap[key];
     const meta = EVENT_TYPE_META[ev.type] || { label: ev.type, color: '#94a3b8' };
     const past = ev.date < today;
@@ -90,7 +96,7 @@ function renderFaltasSection(d) {
     const durH = ((ev.dur || 60) / 60).toFixed(1).replace('.0', '') + 'h';
     return `
       <label class="falta-row ${faltou ? 'faltei' : ''} ${past ? '' : 'futura'}">
-        <input type="checkbox" ${faltou ? 'checked' : ''} onchange="toggleFalta('${d.id}', ${JSON.stringify(key)})">
+        <input type="checkbox" ${faltou ? 'checked' : ''} onchange="toggleFalta('${d.id}', '${key}')">
         <div class="falta-info">
           <div class="falta-title">${ev.title}</div>
           <div class="falta-meta">${dateFmt} · ${ev.time} · <span style="color:${meta.color}">${meta.label}</span> · ${durH}${past ? '' : ' · <i>futura</i>'}</div>
@@ -117,7 +123,7 @@ function renderFaltasSection(d) {
         <div class="mini-track" style="height:10px"><div class="mini-fill" style="width:${barPct}%; background:${s.statusCls === 'danger' ? 'var(--rose)' : s.statusCls === 'warn' ? '#f59e0b' : d.color}"></div></div>
         <div style="text-align:right;margin-top:6px"><span class="st-badge ${s.statusCls}">${s.statusMsg}</span></div>
       </div>
-      <details>
+      <details ${faltasListOpen[d.id] ? 'open' : ''} ontoggle="faltasListOpen['${d.id}']=this.open">
         <summary style="cursor:pointer;font-weight:700;font-size:.85rem;color:var(--slate)">📅 Ver aulas / marcar faltas (${s.events.length} eventos)</summary>
         <div class="falta-list">${rows}</div>
       </details>
