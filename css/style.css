@@ -213,3 +213,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .import-preview h4{margin-bottom:10px}
 .pill-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .pill-list span{background:#f1f5f9;padding:4px 10px;border-radius:8px;font-size:.72rem;font-weight:600}
+
+/* ── FALTAS (lista de eventos com checkbox) ── */
+.falta-list{margin-top:10px;display:flex;flex-direction:column;gap:4px;max-height:400px;overflow-y:auto;padding:4px 2px}
+.falta-row{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:background .15s;border:1px solid var(--border)}
+.falta-row:hover{background:#f8fafc}
+.falta-row input[type="checkbox"]{width:18px;height:18px;cursor:pointer;flex-shrink:0}
+.falta-row.faltei{background:#fee2e2;border-color:#fca5a5}
+.falta-row.faltei .falta-title{text-decoration:line-through;color:#7f1d1d}
+.falta-row.futura{opacity:0.6}
+.falta-info{flex:1;min-width:0}
+.falta-title{font-size:.85rem;font-weight:600;color:var(--text)}
+.falta-meta{font-size:.7rem;color:var(--slate);margin-top:2px;font-family:'DM Mono',monospace}

@@ -183,6 +183,7 @@ function renderDiscPanel(d) {
 
     ${d.id === 'ped2' ? renderAmbulatorioPicker() : ''}
     ${d.id === 'cir2' ? renderOftalmoPicker() : ''}
+    ${d.id === 'psicomed8' ? renderPsicomedPicker() : ''}
 
     <div class="dash-title">📅 Próximas aulas e provas</div>
     ${renderDisciplineAgenda(d)}
@@ -190,6 +191,8 @@ function renderDiscPanel(d) {
       <button class="gcal-btn" onclick="syncToGoogleCalendar('${d.id}')">🗓️ Sincronizar só esta disciplina com a Google Agenda</button>
       <span class="gcal-status" id="gcal-status" style="margin-left:10px"></span>
     </div>
+
+    ${renderFaltasSection(d)}
 
     ${sectionsHtml}
   `;

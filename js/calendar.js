@@ -232,16 +232,23 @@ function renderDisciplineAgenda(d) {
   const events = sched.sort((a, b) => a.date.localeCompare(b.date) || (a.time || '').localeCompare(b.time || ''));
   if (!events.length) return `<div class="agenda-empty">Sem cronograma cadastrado.</div>`;
   const today = new Date().toISOString().slice(0, 10);
+  // Se estivermos em Psicomed 8 e o usuário escolheu um grupo, destacamos a
+  // aula em que ele apresenta (usando os dados de js/psicomed.js).
+  const psicomedPres = (d.id === 'psicomed8' && typeof getPsicomedUserPresentation === 'function') ? getPsicomedUserPresentation() : null;
+
   const items = events.map(ev => {
     const dt = new Date(ev.date + 'T00:00:00');
     const day = dt.getDate().toString().padStart(2, '0');
     const month = dt.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '');
     const meta = EVENT_TYPE_META[ev.type] || { label: ev.type, color: '#94a3b8' };
     const past = ev.date < today ? 'opacity:.5' : '';
-    return `<div class="agenda-item" style="${past}">
+    const isPsicomedMyDay = psicomedPres && psicomedPres.date === ev.date;
+    const highlight = isPsicomedMyDay ? 'background:#fef3c7;border-left:4px solid #f59e0b;padding-left:12px' : '';
+    const badge = isPsicomedMyDay ? '<span class="agenda-type" style="background:#fde68a;color:#92400e;margin-left:6px">🎤 SUA APRESENTAÇÃO</span>' : '';
+    return `<div class="agenda-item" style="${past};${highlight}">
       <div class="agenda-date"><div class="d">${day}</div><div class="m">${month}</div></div>
       <span class="agenda-type" style="background:${meta.color}22;color:${meta.color}">${meta.label}</span>
-      <div class="agenda-body"><div class="agenda-title">${ev.title}</div>${ev.time ? `<div class="agenda-meta">${ev.time}–${addMinutesLocal(ev.date, ev.time, ev.dur || 60).slice(11)}</div>` : ''}</div>
+      <div class="agenda-body"><div class="agenda-title">${ev.title}${badge}</div>${ev.time ? `<div class="agenda-meta">${ev.time}–${addMinutesLocal(ev.date, ev.time, ev.dur || 60).slice(11)}</div>` : ''}</div>
     </div>`;
   }).join('');
   return `<div class="agenda-list">${items}</div>`;
