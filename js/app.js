@@ -58,6 +58,7 @@ function renderAll() {
     });
     html += `<div class="panel ${activeTab === 'calendario' ? 'active' : ''}" id="panel-calendario">${activeTab === 'calendario' ? renderCalendarTab() : ''}</div>`;
     html += `<div class="panel ${activeTab === 'provas' ? 'active' : ''}" id="panel-provas">${activeTab === 'provas' ? renderProvasTab() : ''}</div>`;
+    html += `<div class="panel ${activeTab === 'novidades' ? 'active' : ''}" id="panel-novidades">${activeTab === 'novidades' ? renderChangelogTab() : ''}</div>`;
     panels.innerHTML = html;
 
     if (activeTab === 'calendario' && calendarCurrentView !== 'provas') {
@@ -77,7 +78,8 @@ function renderTabs() {
     { id: 'resumo', label: 'Dashboard', emoji: '📊', color: 'var(--navy)' },
     ...userDisciplines.map(d => ({ id: d.id, label: d.label, emoji: d.emoji, color: d.color })),
     { id: 'calendario', label: 'Calendário', emoji: '📅', color: 'var(--indigo)' },
-    { id: 'provas', label: 'Provas', emoji: '📝', color: 'var(--rose)' }
+    { id: 'provas', label: 'Provas', emoji: '📝', color: 'var(--rose)' },
+    { id: 'novidades', label: 'Novidades', emoji: '🆕', color: 'var(--emerald)' }
   ];
   document.getElementById('tabs').innerHTML = all.map(t => {
     const active = t.id === activeTab ? 'active' : '';
@@ -127,30 +129,36 @@ function eventCardHTML({ ev, startDt, endDt }, kind) {
   const meta = EVENT_TYPE_META[p.type] || { label: p.type, color: '#94a3b8' };
   const dateFmt = startDt.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit' });
   const timeRange = `${formatHHMM(startDt)}–${formatHHMM(endDt)}`;
+  const color = ev.backgroundColor;
+  const discChip = `<span class="nn-disc-chip" style="background:${color};color:#fff">${p.disciplineEmoji} ${p.disciplineLabel}</span>`;
+  const typeChip = `<span class="nn-type" style="background:${meta.color}22;color:${meta.color}">${meta.label}</span>`;
+
   if (kind === 'now') {
     const totalMs = endDt - startDt;
     const doneMs = new Date() - startDt;
     const pctDone = Math.max(0, Math.min(100, (doneMs / totalMs) * 100));
     const minsLeft = Math.max(0, Math.round((endDt - new Date()) / 60000));
     return `
-      <div class="nn-card nn-now" style="border-left-color:${ev.backgroundColor}" onclick="switchTab('${p.disciplineId}')">
+      <div class="nn-card nn-now" style="--nn-tint:${color}; border-left-color:${color}" onclick="switchTab('${p.disciplineId}')">
         <div class="nn-head">
-          <div class="nn-eyebrow" style="color:${ev.backgroundColor}">🔴 ACONTECENDO AGORA · ${p.disciplineEmoji} ${p.disciplineLabel}</div>
-          <span class="nn-type" style="background:${meta.color}22;color:${meta.color}">${meta.label}</span>
+          <div class="nn-eyebrow">🔴 ACONTECENDO AGORA</div>
+          ${typeChip}
         </div>
+        ${discChip}
         <div class="nn-title">${p.rawTitle}</div>
-        <div class="nn-meta">${dateFmt} · ${timeRange} · <b>termina em ${minsLeft} min</b></div>
-        <div class="nn-progress"><div class="nn-progress-fill" style="width:${pctDone}%; background:${ev.backgroundColor}"></div></div>
+        <div class="nn-meta">${dateFmt} · ${timeRange} · <b style="color:${color}">termina em ${minsLeft} min</b></div>
+        <div class="nn-progress"><div class="nn-progress-fill" style="width:${pctDone}%; background:${color}"></div></div>
       </div>`;
   }
   return `
-    <div class="nn-card nn-next" style="border-left-color:${ev.backgroundColor}" onclick="switchTab('${p.disciplineId}')">
+    <div class="nn-card nn-next" style="--nn-tint:${color}; --nn-tint-soft:${color}22; border-left-color:${color}" onclick="switchTab('${p.disciplineId}')">
       <div class="nn-head">
-        <div class="nn-eyebrow" style="color:var(--slate)">⏭️ ${kind === 'firstNext' ? 'LOGO EM SEGUIDA' : 'DEPOIS'} · ${p.disciplineEmoji} ${p.disciplineLabel}</div>
-        <span class="nn-type" style="background:${meta.color}22;color:${meta.color}">${meta.label}</span>
+        <div class="nn-eyebrow">⏭️ ${kind === 'firstNext' ? 'LOGO EM SEGUIDA' : 'DEPOIS'}</div>
+        ${typeChip}
       </div>
+      ${discChip}
       <div class="nn-title">${p.rawTitle}</div>
-      <div class="nn-meta">${dateFmt} · ${timeRange} · <b>${formatRelative(startDt)}</b></div>
+      <div class="nn-meta">${dateFmt} · ${timeRange} · <b style="color:${color}">${formatRelative(startDt)}</b></div>
     </div>`;
 }
 

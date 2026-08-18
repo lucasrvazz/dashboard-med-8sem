@@ -249,3 +249,25 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .disc-subtab:hover{color:var(--text)}
 .disc-subtab.active{background:#fff;color:var(--tab-color,var(--navy));box-shadow:0 2px 6px rgba(0,0,0,.08)}
 .disc-subtab-body{animation:fadeIn .3s ease-out}
+
+/* ── NOVIDADES (changelog) ── */
+.cl-timeline{display:flex;flex-direction:column;gap:28px}
+.cl-group{position:relative}
+.cl-date{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--emerald);margin-bottom:12px;display:inline-block;background:#ecfdf5;padding:4px 12px;border-radius:20px}
+.cl-items{display:flex;flex-direction:column;gap:2px;position:relative;padding-left:6px}
+.cl-items::before{content:'';position:absolute;left:19px;top:8px;bottom:8px;width:2px;background:var(--border)}
+.cl-item{display:flex;gap:14px;padding:12px 8px;position:relative}
+.cl-dot{width:38px;height:38px;border-radius:50%;background:#fff;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;z-index:1;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.cl-body{flex:1;padding-top:4px}
+.cl-title{font-size:.92rem;font-weight:700;color:var(--text)}
+.cl-desc{font-size:.82rem;color:var(--slate);margin-top:3px;line-height:1.5}
+
+/* ── "ACONTECENDO AGORA" — versão mais colorida ── */
+.nn-card{position:relative;overflow:hidden;border-left-width:6px}
+.nn-card::before{content:'';position:absolute;inset:0;background:var(--nn-tint,transparent);opacity:.08;pointer-events:none}
+.nn-card.nn-now{border-left-width:8px}
+.nn-eyebrow{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:.65rem}
+.nn-now .nn-eyebrow{background:#fecaca;color:#7f1d1d}
+.nn-next .nn-eyebrow{background:var(--nn-tint-soft,#f1f5f9);color:var(--nn-tint,var(--slate))}
+.nn-card.nn-now .nn-title{font-size:1.05rem}
+.nn-disc-chip{display:inline-block;padding:3px 10px;border-radius:8px;font-size:.72rem;font-weight:700;margin-bottom:8px}
