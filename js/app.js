@@ -85,6 +85,94 @@ function renderTabs() {
   }).join('');
 }
 
+// ── "ACONTECENDO AGORA" + "LOGO EM SEGUIDA" ────────────────
+// Lê os eventos de todas as disciplinas (via buildAllEvents) e mostra no topo
+// do Dashboard o que está rolando neste minuto e o próximo evento futuro.
+// Considera duração real (dur) e cronogramas dinâmicos (ambulatório, oftalmo,
+// rodízio) automaticamente.
+function findNowAndNext() {
+  const now = new Date();
+  const events = buildAllEvents()
+    .filter(e => !e.allDay && e.start && e.end)
+    .map(e => ({
+      ev: e,
+      startDt: new Date(e.start),
+      endDt: new Date(e.end)
+    }))
+    .sort((a, b) => a.startDt - b.startDt);
+
+  const nowEvents = events.filter(x => x.startDt <= now && now < x.endDt);
+  const nextEvents = events.filter(x => x.startDt > now).slice(0, 3);
+  return { nowEvents, nextEvents };
+}
+
+function formatHHMM(dt) {
+  return dt.toTimeString().slice(0, 5);
+}
+
+function formatRelative(dt) {
+  const now = new Date();
+  const diffMs = dt - now;
+  const diffMin = Math.round(diffMs / 60000);
+  if (diffMin < 60) return `em ${diffMin} min`;
+  const diffH = Math.floor(diffMin / 60);
+  const restMin = diffMin % 60;
+  if (diffH < 24) return restMin ? `em ${diffH}h${restMin.toString().padStart(2, '0')}` : `em ${diffH}h`;
+  const diffD = Math.floor(diffH / 24);
+  return `em ${diffD} dia${diffD === 1 ? '' : 's'}`;
+}
+
+function eventCardHTML({ ev, startDt, endDt }, kind) {
+  const p = ev.extendedProps;
+  const meta = EVENT_TYPE_META[p.type] || { label: p.type, color: '#94a3b8' };
+  const dateFmt = startDt.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit' });
+  const timeRange = `${formatHHMM(startDt)}–${formatHHMM(endDt)}`;
+  if (kind === 'now') {
+    const totalMs = endDt - startDt;
+    const doneMs = new Date() - startDt;
+    const pctDone = Math.max(0, Math.min(100, (doneMs / totalMs) * 100));
+    const minsLeft = Math.max(0, Math.round((endDt - new Date()) / 60000));
+    return `
+      <div class="nn-card nn-now" style="border-left-color:${ev.backgroundColor}" onclick="switchTab('${p.disciplineId}')">
+        <div class="nn-head">
+          <div class="nn-eyebrow" style="color:${ev.backgroundColor}">🔴 ACONTECENDO AGORA · ${p.disciplineEmoji} ${p.disciplineLabel}</div>
+          <span class="nn-type" style="background:${meta.color}22;color:${meta.color}">${meta.label}</span>
+        </div>
+        <div class="nn-title">${p.rawTitle}</div>
+        <div class="nn-meta">${dateFmt} · ${timeRange} · <b>termina em ${minsLeft} min</b></div>
+        <div class="nn-progress"><div class="nn-progress-fill" style="width:${pctDone}%; background:${ev.backgroundColor}"></div></div>
+      </div>`;
+  }
+  return `
+    <div class="nn-card nn-next" style="border-left-color:${ev.backgroundColor}" onclick="switchTab('${p.disciplineId}')">
+      <div class="nn-head">
+        <div class="nn-eyebrow" style="color:var(--slate)">⏭️ ${kind === 'firstNext' ? 'LOGO EM SEGUIDA' : 'DEPOIS'} · ${p.disciplineEmoji} ${p.disciplineLabel}</div>
+        <span class="nn-type" style="background:${meta.color}22;color:${meta.color}">${meta.label}</span>
+      </div>
+      <div class="nn-title">${p.rawTitle}</div>
+      <div class="nn-meta">${dateFmt} · ${timeRange} · <b>${formatRelative(startDt)}</b></div>
+    </div>`;
+}
+
+function renderNowAndNext() {
+  const { nowEvents, nextEvents } = findNowAndNext();
+
+  if (!nowEvents.length && !nextEvents.length) {
+    return `<div class="nn-empty">🏖️ Nenhum evento agendado à frente — o semestre acabou ou o cronograma ainda não começou.</div>`;
+  }
+
+  const nowHtml = nowEvents.length
+    ? nowEvents.map(x => eventCardHTML(x, 'now')).join('')
+    : `<div class="nn-card nn-idle">
+        <div class="nn-eyebrow" style="color:var(--slate)">🔵 AGORA</div>
+        <div class="nn-title" style="color:var(--slate);font-weight:500">Nada acontecendo neste momento</div>
+      </div>`;
+
+  const nextHtml = nextEvents.map((x, i) => eventCardHTML(x, i === 0 ? 'firstNext' : 'next')).join('');
+
+  return `<div class="nn-wrap">${nowHtml}${nextHtml}</div>`;
+}
+
 function renderResumo() {
   const { pct } = globalProgress();
   const overview = calcSemesterOverview();
@@ -126,6 +214,8 @@ function renderResumo() {
   }).join('');
 
   return `
+    ${renderNowAndNext()}
+
     <div class="dash-grid-top">
       <div class="dash-card">
         <div class="dash-title">⏳ Contagem Regressiva (fim do semestre — 14/12/2026)</div>
@@ -297,4 +387,14 @@ function startCountdown() {
     const d = Math.floor(diff / 86400000), h = Math.floor((diff % 86400000) / 3600000), m = Math.floor((diff % 3600000) / 60000);
     el.textContent = `${d.toString().padStart(2, '0')}:${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
   }, 1000);
+  // Atualiza o "Acontecendo agora" a cada 60s, sem re-renderizar o dashboard
+  // inteiro (para não perder foco de inputs abertos em outras abas).
+  setInterval(() => {
+    const wrap = document.querySelector('#panel-resumo .nn-wrap, #panel-resumo .nn-empty');
+    if (wrap && activeTab === 'resumo') {
+      const container = document.createElement('div');
+      container.innerHTML = renderNowAndNext();
+      wrap.replaceWith(container.firstElementChild);
+    }
+  }, 60 * 1000);
 }

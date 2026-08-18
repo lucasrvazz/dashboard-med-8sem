@@ -225,3 +225,20 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 .falta-info{flex:1;min-width:0}
 .falta-title{font-size:.85rem;font-weight:600;color:var(--text)}
 .falta-meta{font-size:.7rem;color:var(--slate);margin-top:2px;font-family:'DM Mono',monospace}
+
+/* ── "ACONTECENDO AGORA" + "LOGO EM SEGUIDA" (topo do Dashboard) ── */
+.nn-wrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-bottom:24px}
+.nn-empty{text-align:center;padding:24px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:14px;color:var(--slate);font-size:.88rem;margin-bottom:24px}
+.nn-card{background:var(--surface);border-radius:14px;padding:14px 16px;border:1px solid var(--border);border-left:4px solid var(--slate);box-shadow:0 4px 12px rgba(0,0,0,.04);cursor:pointer;transition:transform .15s, box-shadow .15s}
+.nn-card:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.08)}
+.nn-card.nn-now{background:linear-gradient(135deg,#fff,#fef2f2);border-color:#fca5a5;box-shadow:0 0 0 3px rgba(220,38,38,.08),0 4px 14px rgba(220,38,38,.15);animation:nnPulse 2s ease-in-out infinite}
+@keyframes nnPulse{0%,100%{box-shadow:0 0 0 3px rgba(220,38,38,.08),0 4px 14px rgba(220,38,38,.15)}50%{box-shadow:0 0 0 5px rgba(220,38,38,.15),0 6px 18px rgba(220,38,38,.25)}}
+.nn-card.nn-idle{background:#f8fafc;border-left-color:#cbd5e1;cursor:default}
+.nn-card.nn-idle:hover{transform:none;box-shadow:0 4px 12px rgba(0,0,0,.04)}
+.nn-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+.nn-eyebrow{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.nn-type{font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:6px;white-space:nowrap}
+.nn-title{font-size:.95rem;font-weight:700;color:var(--text);line-height:1.3;margin-bottom:4px}
+.nn-meta{font-size:.75rem;color:var(--slate);font-family:'DM Mono',monospace}
+.nn-progress{margin-top:10px;height:6px;background:#fee2e2;border-radius:4px;overflow:hidden}
+.nn-progress-fill{height:100%;border-radius:4px;transition:width 1s linear}
