@@ -94,6 +94,45 @@ function ensureGCalToken() {
   });
 }
 
+// Mescla as seções de conteúdo do template (js/data.js — sempre a versão mais
+// atual, editada por nós) com as seções salvas do usuário (que carregam o
+// status de revisão marcado por ele). Tópicos do template sempre aparecem,
+// com o status preservado quando o texto do tópico já existia antes; tópicos
+// que o próprio usuário adicionou manualmente (fora do template) são mantidos
+// no fim da seção correspondente; seções 100% customizadas pelo usuário
+// (sem título correspondente no template) também são preservadas.
+function mergeSections(tmplSections, savedSections) {
+  savedSections = savedSections || [];
+  const savedByTitle = {};
+  savedSections.forEach(s => { savedByTitle[s.title] = s; });
+  const usedTitles = new Set();
+
+  const merged = (tmplSections || []).map(tmplSec => {
+    usedTitles.add(tmplSec.title);
+    const savedSec = savedByTitle[tmplSec.title];
+    const savedStatusByLabel = {};
+    if (savedSec) (savedSec.items || []).forEach(i => { savedStatusByLabel[i.label] = i.status; });
+
+    const items = tmplSec.items.map(label => ({
+      id: genId(),
+      label,
+      status: savedStatusByLabel[label] !== undefined ? savedStatusByLabel[label] : 0
+    }));
+    // Preserva tópicos que o usuário adicionou manualmente e não estão no template.
+    if (savedSec) {
+      (savedSec.items || []).forEach(i => {
+        if (!tmplSec.items.includes(i.label)) items.push({ id: i.id || genId(), label: i.label, status: i.status || 0 });
+      });
+    }
+    return { title: tmplSec.title, items };
+  });
+
+  // Preserva seções inteiramente customizadas pelo usuário (título que não existe no template).
+  savedSections.forEach(s => { if (!usedTitles.has(s.title)) merged.push(s); });
+
+  return merged;
+}
+
 async function loadFromFirestore() {
   try {
     const snap = await db.collection('users').doc(currentUser.uid).collection('checklist8').doc(FIRESTORE_DOC).get();
@@ -103,9 +142,11 @@ async function loadFromFirestore() {
       userGrades = data.userGrades || { si: '' };
       userSettings = data.userSettings || {};
 
-      // Reaplica os metadados oficiais (pesos/conteúdo) das disciplinas padrão,
-      // preservando apenas o progresso do checklist e permitindo que disciplinas
-      // importadas via Gemini (fora do template) continuem intactas.
+      // Reaplica os metadados oficiais (pesos/conteúdo) das disciplinas padrão.
+      // O conteúdo (sections) é MESCLADO, não substituído: os tópicos vêm sempre
+      // atualizados de js/data.js, mas o status de revisão que você já marcou em
+      // cada tópico é preservado (por texto do tópico), e tópicos que você
+      // adicionou manualmente continuam existindo mesmo que não estejam no template.
       userDisciplines.forEach(d => {
         const tmpl = TEMPLATE_DISCIPLINES.find(t => t.id === d.id);
         if (tmpl) {
@@ -114,6 +155,7 @@ async function loadFromFirestore() {
           d.calcDesc = tmpl.calcDesc;
           d.schedule = tmpl.schedule;
           d.passingGrade = tmpl.passingGrade;
+          d.sections = mergeSections(tmpl.sections, d.sections);
         }
         if (!d.sections) d.sections = [];
         d.sections.forEach(s => s.items.forEach(i => { if (i.status === undefined) i.status = 0; }));
