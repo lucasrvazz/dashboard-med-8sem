@@ -95,40 +95,46 @@ function ensureGCalToken() {
 }
 
 // Mescla as seções de conteúdo do template (js/data.js — sempre a versão mais
-// atual, editada por nós) com as seções salvas do usuário (que carregam o
-// status de revisão marcado por ele). Tópicos do template sempre aparecem,
-// com o status preservado quando o texto do tópico já existia antes; tópicos
-// que o próprio usuário adicionou manualmente (fora do template) são mantidos
-// no fim da seção correspondente; seções 100% customizadas pelo usuário
-// (sem título correspondente no template) também são preservadas.
+// atual, editada por nós) com as seções salvas do usuário. As seções são
+// casadas por POSIÇÃO (não por título — título é editável pelo usuário, então
+// usá-lo como chave quebraria a mesclagem assim que ele renomeasse algo).
+// Regras:
+//  - Tópicos novos do template (ainda não vistos pelo usuário) entram no fim.
+//  - A ORDEM que o usuário arrastou é sempre respeitada — nunca reordenamos
+//    de volta para a ordem do template.
+//  - O TÍTULO que o usuário editou é preservado (só usamos o do template se o
+//    usuário nunca tiver essa seção salva ainda).
+//  - Tópicos removidos do template mas presentes no salvo (ou adicionados à
+//    mão pelo usuário) continuam existindo — nunca apagamos conteúdo do usuário.
 function mergeSections(tmplSections, savedSections) {
+  tmplSections = tmplSections || [];
   savedSections = savedSections || [];
-  const savedByTitle = {};
-  savedSections.forEach(s => { savedByTitle[s.title] = s; });
-  const usedTitles = new Set();
 
-  const merged = (tmplSections || []).map(tmplSec => {
-    usedTitles.add(tmplSec.title);
-    const savedSec = savedByTitle[tmplSec.title];
-    const savedStatusByLabel = {};
-    if (savedSec) (savedSec.items || []).forEach(i => { savedStatusByLabel[i.label] = i.status; });
+  const merged = tmplSections.map((tmplSec, idx) => {
+    const savedSec = savedSections[idx];
+    const title = savedSec && savedSec.title ? savedSec.title : tmplSec.title;
+    const savedItems = (savedSec && savedSec.items) || [];
+    const usedLabels = new Set();
 
-    const items = tmplSec.items.map(label => ({
-      id: genId(),
-      label,
-      status: savedStatusByLabel[label] !== undefined ? savedStatusByLabel[label] : 0
-    }));
-    // Preserva tópicos que o usuário adicionou manualmente e não estão no template.
-    if (savedSec) {
-      (savedSec.items || []).forEach(i => {
-        if (!tmplSec.items.includes(i.label)) items.push({ id: i.id || genId(), label: i.label, status: i.status || 0 });
-      });
-    }
-    return { title: tmplSec.title, items };
+    // 1) Mantém a ordem salva (respeita qualquer drag-and-drop já feito).
+    const items = savedItems.map(i => {
+      usedLabels.add(i.label);
+      return { id: i.id || genId(), label: i.label, status: i.status || 0 };
+    });
+
+    // 2) Acrescenta no fim os tópicos novos do template que o usuário ainda não tinha.
+    tmplSec.items.forEach(label => {
+      if (!usedLabels.has(label)) items.push({ id: genId(), label, status: 0 });
+    });
+
+    return { title, items };
   });
 
-  // Preserva seções inteiramente customizadas pelo usuário (título que não existe no template).
-  savedSections.forEach(s => { if (!usedTitles.has(s.title)) merged.push(s); });
+  // Preserva seções extras que o usuário já tinha além das que o template tem hoje
+  // (ex.: seção totalmente customizada, ou uma seção removida do template).
+  if (savedSections.length > tmplSections.length) {
+    merged.push(...savedSections.slice(tmplSections.length));
+  }
 
   return merged;
 }
