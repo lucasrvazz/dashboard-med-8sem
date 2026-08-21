@@ -146,7 +146,7 @@ function eventCardHTML({ ev, startDt, endDt }, kind) {
         </div>
         ${discChip}
         <div class="nn-title">${p.rawTitle}</div>
-        <div class="nn-meta">${dateFmt} · ${timeRange} · <b style="color:${color}">termina em ${minsLeft} min</b></div>
+        <div class="nn-meta">${dateFmt} · ${timeRange}${p.prof ? ` · 👤 ${p.prof}` : ''} · <b style="color:${color}">termina em ${minsLeft} min</b></div>
         <div class="nn-progress"><div class="nn-progress-fill" style="width:${pctDone}%; background:${color}"></div></div>
       </div>`;
   }
@@ -158,7 +158,7 @@ function eventCardHTML({ ev, startDt, endDt }, kind) {
       </div>
       ${discChip}
       <div class="nn-title">${p.rawTitle}</div>
-      <div class="nn-meta">${dateFmt} · ${timeRange} · <b style="color:${color}">${formatRelative(startDt)}</b></div>
+      <div class="nn-meta">${dateFmt} · ${timeRange}${p.prof ? ` · 👤 ${p.prof}` : ''} · <b style="color:${color}">${formatRelative(startDt)}</b></div>
     </div>`;
 }
 
