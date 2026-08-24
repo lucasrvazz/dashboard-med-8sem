@@ -8,6 +8,10 @@ const CHANGELOG_GROUPS = [
   {
     date: 'Mais recente',
     items: [
+      { emoji: '📚', title: 'Cronograma de UE-PED atualizado', desc: 'Laboratórios de Simulação (set/out) agora com as 5 turmas (A a E) em horários específicos, conforme o cronograma oficial mais recente — e corrigida a troca entre as aulas de Asma e Convulsões (25 e 26/08).' },
+      { emoji: '👤', title: 'Nome do professor em cada aula', desc: 'A agenda de cada disciplina (e os cards do Dashboard) agora mostram quem dá a aula, direto da ementa oficial.' },
+      { emoji: '🔧', title: 'Conteúdo de cada disciplina sempre atualizado', desc: 'Correção: se você já tinha usado o site, novos tópicos de conteúdo agora aparecem automaticamente, sem perder o progresso que você já tinha marcado.' },
+      { emoji: '🔧', title: 'Ordem e título do Conteúdo ficam salvos', desc: 'Correção: se você arrasta os tópicos pra reorganizar ou renomeia o título de uma seção, agora isso é lembrado da próxima vez que você entrar.' },
       { emoji: '🆕', title: 'Aba de Novidades', desc: 'Essa aba aqui — pra você acompanhar tudo que muda no site sem precisar perguntar.' },
       { emoji: '🎨', title: '"Acontecendo agora" mais visual', desc: 'Cards do Dashboard com cores da disciplina, faixa de destaque e badges maiores.' },
       { emoji: '🎤', title: 'Grupos de Psicomed 8', desc: 'Escolha seu grupo na aba de Psicomed e veja o dia da sua apresentação destacado automaticamente na agenda.' },
