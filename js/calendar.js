@@ -70,7 +70,7 @@ function buildAllEvents() {
         borderColor: isProva ? '#e11d48' : d.color,
         extendedProps: {
           disciplineId: d.id, disciplineLabel: d.label, disciplineEmoji: d.emoji,
-          type: ev.type, rawTitle: ev.title, dateRaw: ev.date, timeRaw: ev.time, durMin: dur, prof: ev.prof
+          type: ev.type, rawTitle: ev.title, dateRaw: ev.date, timeRaw: ev.time, durMin: dur, prof: ev.prof, local: ev.local
         }
       });
     });
@@ -164,7 +164,7 @@ function initProvasCalendarIfNeeded() {
     events: provaEvents,
     eventClick: function (info) {
       const p = info.event.extendedProps;
-      alert(`${p.disciplineEmoji} ${p.disciplineLabel}\n${p.rawTitle}\n📅 ${p.dateRaw}`);
+      alert(`${p.disciplineEmoji} ${p.disciplineLabel}\n${p.rawTitle}\n📅 ${p.dateRaw}${p.prof ? '\n👤 ' + p.prof : ''}${p.local ? '\n📍 ' + p.local : ''}`);
     }
   });
   provasCalendarInstance.render();
@@ -184,7 +184,7 @@ function initFullCalendarIfNeeded() {
     events: getFilteredEvents(),
     eventClick: function (info) {
       const p = info.event.extendedProps;
-      alert(`${p.disciplineEmoji} ${p.disciplineLabel}\n${p.rawTitle}\n📅 ${p.dateRaw}`);
+      alert(`${p.disciplineEmoji} ${p.disciplineLabel}\n${p.rawTitle}\n📅 ${p.dateRaw}${p.prof ? '\n👤 ' + p.prof : ''}${p.local ? '\n📍 ' + p.local : ''}`);
     }
   });
   calendarInstance.render();
@@ -248,7 +248,7 @@ function renderDisciplineAgenda(d) {
     return `<div class="agenda-item" style="${past};${highlight}">
       <div class="agenda-date"><div class="d">${day}</div><div class="m">${month}</div></div>
       <span class="agenda-type" style="background:${meta.color}22;color:${meta.color}">${meta.label}</span>
-      <div class="agenda-body"><div class="agenda-title">${ev.title}${badge}</div>${ev.time ? `<div class="agenda-meta">${ev.time}–${addMinutesLocal(ev.date, ev.time, ev.dur || 60).slice(11)}${ev.prof ? ` · 👤 ${ev.prof}` : ''}</div>` : ''}</div>
+      <div class="agenda-body"><div class="agenda-title">${ev.title}${badge}</div>${ev.time ? `<div class="agenda-meta">${ev.time}–${addMinutesLocal(ev.date, ev.time, ev.dur || 60).slice(11)}${ev.prof ? ` · 👤 ${ev.prof}` : ''}${ev.local ? ` · 📍 ${ev.local}` : ''}</div>` : ''}</div>
     </div>`;
   }).join('');
   return `<div class="agenda-list">${items}</div>`;
