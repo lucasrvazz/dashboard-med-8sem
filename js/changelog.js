@@ -8,6 +8,7 @@ const CHANGELOG_GROUPS = [
   {
     date: 'Mais recente',
     items: [
+      { emoji: '🔪', title: 'Notas de Cirurgia 2 com pesos oficiais', desc: 'Antes era uma estimativa provisória (33,3% pra cada prova). Agora usa a fórmula real da ementa: TP 70% (dividida por sub-módulo), Avaliação Prática 20% e Seminário Integrador 10% — mais o conteúdo de prova completo e a correção de 3 professores de ORL (eram creditados ao Prof. André, na verdade são da Profª Alessandra).' },
       { emoji: '📚', title: 'Cronograma de UE-PED atualizado', desc: 'Laboratórios de Simulação (set/out) agora com as 5 turmas (A a E) em horários específicos, conforme o cronograma oficial mais recente — e corrigida a troca entre as aulas de Asma e Convulsões (25 e 26/08).' },
       { emoji: '👤', title: 'Nome do professor em cada aula', desc: 'A agenda de cada disciplina (e os cards do Dashboard) agora mostram quem dá a aula, direto da ementa oficial.' },
       { emoji: '🔧', title: 'Conteúdo de cada disciplina sempre atualizado', desc: 'Correção: se você já tinha usado o site, novos tópicos de conteúdo agora aparecem automaticamente, sem perder o progresso que você já tinha marcado.' },

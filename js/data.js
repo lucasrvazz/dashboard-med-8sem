@@ -288,18 +288,19 @@ const TEMPLATE_DISCIPLINES = [
 // ────────────────────────────────────────────────────────
 {
   id: 'cir2', label: 'Cirurgia 2', emoji: '🔪', fullLabel: 'Saúde do Adulto — Cirurgia II',
-  code: 'não especificado', color: '#d97706', fill: '#fbbf24',
-  siWeight: 0, passingGrade: 5.0,
-  calcDesc: '⚠️ O cronograma oficial desta disciplina não informa os pesos de cada prova nem a nota mínima de aprovação — apenas as datas. O sistema está usando <b>divisão igualitária (33,3% cada)</b> entre as 3 provas como estimativa provisória. Atualize os pesos reais assim que a coordenação divulgar o plano de ensino completo (edite diretamente em js/data.js).',
+  code: 'FMD0017', color: '#d97706', fill: '#fbbf24',
+  siWeight: 0.10, passingGrade: 5.0,
+  calcDesc: 'NFM = Prova Teórico-Prática — TP (70%) + Avaliação Prática — AP (20%) + Atividade de Integração — AI (10%, é o Seminário Integrador). A TP se divide pelos 4 sub-módulos (Anestesiologia, Ortopedia, Otorrino, Oftalmologia, 17,5% cada): a prova de Ortopedia/Oftalmologia cobre 2 sub-módulos (35%), Anestesia e Otorrino valem 17,5% cada. Insira as notas de 0 a 10 (a AP é definida pelos professores de cada sub-módulo ao final do rodízio prático). <b>Atenção:</b> segundo a ementa oficial, quem não atingir nota 5,0 em qualquer um dos 4 sub-módulos está <u>automaticamente reprovado</u>, mesmo com a média geral acima de 5 — o cálculo abaixo mostra a média ponderada, mas fique de olho nota por nota também. Frequência mínima 75% (falta &gt;25% total ou em um único sub-módulo = reprovação SR).',
   assessments: [
-    { id: 'prova_ortoped_oftalmo', label: 'Prova Ortopedia/Oftalmologia (30/11)', weight: 0.3334, max: 10 },
-    { id: 'prova_anestesia', label: 'Prova de Anestesia (07/12)', weight: 0.3333, max: 10 },
-    { id: 'prova_orl', label: 'Prova de Otorrinolaringologia (07/12)', weight: 0.3333, max: 10 }
+    { id: 'prova_ortoped_oftalmo', label: 'Prova Ortopedia/Oftalmologia (30/11)', weight: 0.35, max: 10 },
+    { id: 'prova_anestesia', label: 'Prova de Anestesia (07/12)', weight: 0.175, max: 10 },
+    { id: 'prova_orl', label: 'Prova de Otorrinolaringologia (07/12)', weight: 0.175, max: 10 },
+    { id: 'avaliacao_pratica', label: 'Avaliação Prática (AP, 4 sub-módulos)', weight: 0.20, max: 10 }
   ],
   sections: [
-    { title: 'Prova Ortopedia/Oftalmologia', items: ['Conceitos básicos em ortopedia e investigação diagnóstica','Traumatologia: classificação, aspectos clínicos e consolidação','Lesões traumáticas: contusões, entorses, fraturas, luxações','Infecções osteoarticulares: osteomielite, artrite séptica, tuberculose','Lombalgias mecânicas, lombociatalgias','Osteoartrose (joelho e quadril)','Dor: neurofisiologia e aspectos clínicos','Exame oftalmológico normal e ametropias','Diagnóstico diferencial de olho vermelho','Catarata','Glaucoma','Estrabismo','Retinopatia diabética e hipertensiva'] },
-    { title: 'Prova de Anestesia', items: ['Avaliação e preparo pré-anestésico','Via aérea e ventilação','Anestesia regional','Anestesia geral inalatória','Anestesia geral venosa'] },
-    { title: 'Prova de Otorrinolaringologia', items: ['Otites e complicações — tratamento','Rinossinusites e complicações — tratamento','Doenças do anel linfático de Waldeyer — tratamento','Produção da voz, disfonias e tratamentos','Tumores da boca e laringe','Afecções das glândulas salivares'] }
+    { title: 'Prova Ortopedia/Oftalmologia', items: ['Introdução à ortopedia e traumatologia','Conceitos básicos de ortopedia / investigação diagnóstica em ortopedia','Traumatologia: fraturas — classificação, aspectos clínicos e consolidação','Lesões traumáticas fundamentais: contusões, entorses, fraturas, luxações, lesões musculares e tendinopatias','Infecções osteoarticulares: osteomielite, artrite séptica, tuberculose','Lombalgias mecânicas, lombociatalgias','Osteoartroses','Tumores ósseos','Exame oftalmológico normal e ametropias','Diagnóstico diferencial de olho vermelho','Catarata','Glaucoma','Plástica ocular','Estrabismo','Retinopatia diabética e hipertensiva','Doenças sistêmicas e olho'] },
+    { title: 'Prova de Anestesia', items: ['Avaliação e preparo pré-anestésico','Via aérea e ventilação','Anestesia geral','Anestesia regional','Complicações em anestesia','Dor: neurofisiologia e aspectos clínicos'] },
+    { title: 'Prova de Otorrinolaringologia', items: ['Anatomo-fisiologia do órgão vestíbulo-coclear, cavidade nasal/seios paranasais, cavidade oral, faringe/laringe e pescoço','Otites e suas complicações — tratamento','Rinossinusites agudas e crônicas — complicações e tratamento','Indicações operatórias das doenças do anel linfático de Waldeyer','Produção da voz e da fala humana — disfonias e tratamentos','Principais doenças tumorais em ORL (câncer de cavidade oral e laringe)','Urgências e emergências em ORL: epistaxe, paralisia facial periférica, surdez súbita','Principais afecções das glândulas salivares'] }
   ],
   // Horário fixo semanal: Segunda-feira, blocos teóricos 11h-11:50h e 13h-13:50h — mais os
   // blocos práticos 8h-10h (anestesia/ortopedia) e 14h-16h (otorrino/oftalmo) da grade oficial,
@@ -314,7 +315,7 @@ const TEMPLATE_DISCIPLINES = [
     {date:'2026-08-31', time:'11:00', type:'aula', title:'Lesões traumáticas fundamentais: contusões, entorses, fraturas, luxações', prof:'Eugenio'},
     {date:'2026-08-31', time:'13:00', type:'aula', title:'Rinossinusites e suas complicações — tratamento', prof:'André'},
     {date:'2026-09-14', time:'11:00', type:'aula', title:'Via aérea e ventilação', prof:'Cátia'},
-    {date:'2026-09-14', time:'13:00', type:'seminario', title:'Seminário Integrador'},
+    {date:'2026-09-14', time:'13:00', type:'seminario', title:'Seminário Integrador', prof:'Alessandra e Chalita'},
     {date:'2026-09-21', type:'evento', title:'Semana Universitária'},
     {date:'2026-09-28', time:'11:00', type:'aula', title:'Anestesia regional', prof:'Henrique'},
     {date:'2026-09-28', time:'13:00', type:'aula', title:'Catarata', prof:'Chalita'},
@@ -323,15 +324,15 @@ const TEMPLATE_DISCIPLINES = [
     {date:'2026-10-19', time:'11:00', type:'aula', title:'Dor: neurofisiologia e aspectos clínicos', prof:'Helga'},
     {date:'2026-10-19', time:'13:00', type:'aula', title:'Glaucoma', prof:'Chalita'},
     {date:'2026-10-26', time:'11:00', type:'aula', title:'Lombalgias mecânicas, lombociatalgias', prof:'Eugenio'},
-    {date:'2026-10-26', time:'13:00', type:'aula', title:'Produção humana da voz, disfonias e tratamentos', prof:'André'},
+    {date:'2026-10-26', time:'13:00', type:'aula', title:'Produção humana da voz, disfonias e tratamentos', prof:'Alessandra'},
     {date:'2026-11-09', time:'11:00', type:'aula', title:'Anestesia geral inalatória', prof:'Cátia'},
     {date:'2026-11-09', time:'13:00', type:'aula', title:'Estrabismo', prof:'Chalita'},
     {date:'2026-11-16', time:'11:00', type:'aula', title:'Osteoartrose (joelho e quadril)', prof:'Eugenio'},
-    {date:'2026-11-16', time:'13:00', type:'aula', title:'Principais doenças tumorais em ORL, tumores da boca e laringe', prof:'André'},
+    {date:'2026-11-16', time:'13:00', type:'aula', title:'Principais doenças tumorais em ORL, tumores da boca e laringe', prof:'Alessandra'},
     {date:'2026-11-23', time:'11:00', type:'aula', title:'Anestesia geral venosa', prof:'Cátia'},
     {date:'2026-11-23', time:'13:00', type:'aula', title:'Retinopatia diabética e hipertensiva', prof:'Chalita'},
     {date:'2026-11-30', time:'11:00', type:'prova', title:'Prova — Ortopedia/Oftalmologia', assessmentId:'prova_ortoped_oftalmo', prof:'Eugenio'},
-    {date:'2026-11-30', time:'13:00', type:'aula', title:'Principais afecções das glândulas salivares', prof:'André'},
+    {date:'2026-11-30', time:'13:00', type:'aula', title:'Principais afecções das glândulas salivares', prof:'Alessandra'},
     {date:'2026-12-07', time:'11:00', type:'prova', title:'Prova de Anestesia', assessmentId:'prova_anestesia', prof:'Henrique'},
     {date:'2026-12-07', time:'13:00', type:'prova', title:'Prova de Otorrinolaringologia', assessmentId:'prova_orl', prof:'André'}
   ]
