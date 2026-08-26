@@ -8,6 +8,7 @@ const CHANGELOG_GROUPS = [
   {
     date: 'Mais recente',
     items: [
+      { emoji: '🚨', title: 'Ementa completa de UE-Cirurgia', desc: 'Cronograma com as 18 aulas do semestre, professores, local (BSA S) e a fórmula real de nota (Avaliação I 45% + Avaliação II 45% + Atividade Integradora 10%), a partir do plano de ensino oficial (FMD0021).' },
       { emoji: '📍', title: 'Local das aulas na agenda', desc: 'Cada aula agora mostra também onde ela acontece (sala/prédio) — na agenda de cada disciplina, no calendário e nos cards do Dashboard, com base na grade horária oficial da turma.' },
       { emoji: '🔪', title: 'Notas de Cirurgia 2 com pesos oficiais', desc: 'Antes era uma estimativa provisória (33,3% pra cada prova). Agora usa a fórmula real da ementa: TP 70% (dividida por sub-módulo), Avaliação Prática 20% e Seminário Integrador 10% — mais o conteúdo de prova completo e a correção de 3 professores de ORL (eram creditados ao Prof. André, na verdade são da Profª Alessandra).' },
       { emoji: '📚', title: 'Cronograma de UE-PED atualizado', desc: 'Laboratórios de Simulação (set/out) agora com as 5 turmas (A a E) em horários específicos, conforme o cronograma oficial mais recente — e corrigida a troca entre as aulas de Asma e Convulsões (25 e 26/08).' },
