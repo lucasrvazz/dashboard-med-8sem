@@ -60,8 +60,14 @@ function buildAllEvents() {
     sched.forEach((ev, idx) => {
       const isProva = ev.type === 'prova';
       const dur = ev.dur || 60; // duração em minutos — 60 é o padrão quando a duração exata não está marcada
+      // ID estável (data+hora+conteúdo do título), não a posição no array — o cronograma é
+      // editado com frequência (itens inseridos/reordenados), e um ID baseado em índice faz
+      // um evento já sincronizado no Google Agenda "virar" outro evento diferente quando a
+      // posição muda, misturando campos de dia-inteiro e com-horário no mesmo evento do Google
+      // (causa do erro "Invalid start time" na sincronização).
+      const slug = (ev._key || ev.title || '').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40);
       events.push({
-        id: `${d.id}-${ev._key || idx}`,
+        id: `${d.id}-${ev.date}-${ev.time || 'ad'}-${slug || idx}`,
         title: `${d.emoji} ${ev.title}`,
         start: ev.date + (ev.time ? 'T' + ev.time : ''),
         end: ev.time ? addMinutesLocal(ev.date, ev.time, dur) : undefined,
@@ -289,15 +295,20 @@ async function upsertGCalEvent(token, calendarId, ev) {
     description: `${ev.extendedProps.disciplineLabel} — ${meta.label}`,
     extendedProperties: { private: { appEventId: ev.id } }
   };
+  // Sempre zeramos explicitamente o campo do "outro" tipo (date vs dateTime) — se um evento
+  // já existente no Google tiver sido criado como dia-inteiro e agora virou um evento com
+  // horário (ou vice-versa, por causa de uma edição no cronograma), um PATCH que só manda
+  // o campo novo pode deixar o campo antigo "pendurado" no evento, e o Google recusa com
+  // "Invalid start time" por ter date e dateTime juntos no mesmo start/end.
   if (ev.allDay) {
-    body.start = { date: ev.extendedProps.dateRaw };
-    body.end = { date: ev.extendedProps.dateRaw };
+    body.start = { date: ev.extendedProps.dateRaw, dateTime: null };
+    body.end = { date: ev.extendedProps.dateRaw, dateTime: null };
   } else {
     const startDt = new Date(ev.start);
     const durMin = ev.extendedProps.durMin || 60;
     const endDt = new Date(startDt.getTime() + durMin * 60000);
-    body.start = { dateTime: startDt.toISOString(), timeZone: 'America/Sao_Paulo' };
-    body.end = { dateTime: endDt.toISOString(), timeZone: 'America/Sao_Paulo' };
+    body.start = { dateTime: startDt.toISOString(), timeZone: 'America/Sao_Paulo', date: null };
+    body.end = { dateTime: endDt.toISOString(), timeZone: 'America/Sao_Paulo', date: null };
   }
   if (search.items && search.items.length) {
     await gcalFetch(token, `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events/${search.items[0].id}`, { method: 'PATCH', body: JSON.stringify(body) });
