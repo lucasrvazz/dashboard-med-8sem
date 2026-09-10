@@ -106,35 +106,63 @@ function ensureGCalToken() {
 //    usuário nunca tiver essa seção salva ainda).
 //  - Tópicos removidos do template mas presentes no salvo (ou adicionados à
 //    mão pelo usuário) continuam existindo — nunca apagamos conteúdo do usuário.
+//  - Cada seção salva é casada com a seção do template que tem mais tópicos em
+//    comum (não pela posição) — assim, se uma seção do template for dividida em
+//    duas (ex.: "Ortopedia/Oftalmologia" virando "Ortopedia" + "Oftalmologia"),
+//    renomeada ou reordenada, o progresso marcado não se perde nem "vaza" pra
+//    seção errada.
+//  - Além disso, o status (concluído ou não) de cada tópico é lembrado por texto
+//    globalmente entre todas as seções salvas, como uma segunda rede de segurança:
+//    mesmo um tópico que "mudou de seção" continua com o progresso certo.
 function mergeSections(tmplSections, savedSections) {
   tmplSections = tmplSections || [];
   savedSections = savedSections || [];
 
-  const merged = tmplSections.map((tmplSec, idx) => {
-    const savedSec = savedSections[idx];
+  const globalStatus = {};
+  savedSections.forEach(sec => (sec.items || []).forEach(i => {
+    if (i && i.label != null && globalStatus[i.label] === undefined) globalStatus[i.label] = { id: i.id, status: i.status || 0 };
+  }));
+
+  const usedSavedIdx = new Set();
+  const merged = tmplSections.map(tmplSec => {
+    const tmplLabelSet = new Set(tmplSec.items);
+
+    // Acha a seção salva com mais tópicos em comum com esta seção do template
+    // (ainda não usada por outra seção do template).
+    let bestIdx = -1, bestScore = 0;
+    savedSections.forEach((s, i) => {
+      if (usedSavedIdx.has(i)) return;
+      const score = (s.items || []).filter(it => tmplLabelSet.has(it.label)).length;
+      if (score > bestScore) { bestScore = score; bestIdx = i; }
+    });
+    const savedSec = bestIdx !== -1 ? savedSections[bestIdx] : null;
+    if (bestIdx !== -1) usedSavedIdx.add(bestIdx);
+
     const title = savedSec && savedSec.title ? savedSec.title : tmplSec.title;
     const savedItems = (savedSec && savedSec.items) || [];
     const usedLabels = new Set();
 
-    // 1) Mantém a ordem salva (respeita qualquer drag-and-drop já feito).
-    const items = savedItems.map(i => {
-      usedLabels.add(i.label);
-      return { id: i.id || genId(), label: i.label, status: i.status || 0 };
-    });
+    // 1) Mantém a ordem salva (respeita qualquer drag-and-drop já feito), só dos
+    // tópicos que ainda pertencem a esta seção no template atual.
+    const items = savedItems
+      .filter(i => tmplLabelSet.has(i.label))
+      .map(i => { usedLabels.add(i.label); return { id: i.id || genId(), label: i.label, status: i.status || 0 }; });
 
-    // 2) Acrescenta no fim os tópicos novos do template que o usuário ainda não tinha.
+    // 2) Acrescenta no fim os tópicos do template que faltam aqui — recuperando o
+    // status salvo mesmo que o tópico estivesse em outra seção antes.
     tmplSec.items.forEach(label => {
-      if (!usedLabels.has(label)) items.push({ id: genId(), label, status: 0 });
+      if (!usedLabels.has(label)) {
+        const g = globalStatus[label];
+        items.push({ id: (g && g.id) || genId(), label, status: (g && g.status) || 0 });
+      }
     });
 
     return { title, items };
   });
 
-  // Preserva seções extras que o usuário já tinha além das que o template tem hoje
-  // (ex.: seção totalmente customizada, ou uma seção removida do template).
-  if (savedSections.length > tmplSections.length) {
-    merged.push(...savedSections.slice(tmplSections.length));
-  }
+  // Preserva seções extras que o usuário já tinha e que não corresponderam a
+  // nenhuma seção do template hoje (ex.: seção totalmente customizada).
+  savedSections.forEach((s, i) => { if (!usedSavedIdx.has(i)) merged.push(s); });
 
   return merged;
 }

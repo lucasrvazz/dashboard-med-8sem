@@ -8,6 +8,7 @@ const CHANGELOG_GROUPS = [
   {
     date: 'Mais recente',
     items: [
+      { emoji: '✅', title: 'Conteúdo de Cirurgia 2 separado por especialidade', desc: 'A seção de conteúdo que misturava Ortopedia e Oftalmologia agora virou duas: Ortopedia, Anestesiologia, Oftalmologia e Otorrinolaringologia, cada uma com sua lista própria. Quem já tinha marcado tópicos como estudados não perde o progresso.' },
       { emoji: '🐛', title: 'Corrigido erro "Invalid start time" na sincronização', desc: 'A cada edição de cronograma, o "endereço" interno de um evento já sincronizado podia mudar e ficar misturando formato de dia-inteiro com formato de horário no Google, que rejeitava a atualização. Se você já sincronizou antes, é uma boa apagar a agenda "🎓 Medicina 8º Sem — 117" da sua Google Agenda e sincronizar de novo, pra não ficar com eventos antigos duplicados.' },
       { emoji: '🔪', title: 'Rodízio de Cirurgia 2 reatualizado', desc: 'Novo cronograma oficial das práticas: bloco de Ortopedia/Oftalmo mudou de janela (agora inclui 14/09, só de manhã, por causa do Seminário Integrador à tarde) e os rodízios de 30/11 e 07/12 saíram (viraram semana de provas). Também foi adicionada a Apresentação do rodízio (10/08).' },
       { emoji: '🧠', title: 'Cronograma de UE-PED corrigido', desc: 'A aula de 09/09 mudou de "PCR" para "TCE (Traumatismo Cranioencefálico)", conforme o que realmente aconteceu em sala.' },
