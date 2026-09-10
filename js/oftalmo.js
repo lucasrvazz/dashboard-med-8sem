@@ -30,45 +30,55 @@ const OFTALMO_SUBGRUPOS = {
 
 // Datas do rodízio (uma sessão = 14h-16h). A1=C1 e A2=C2, B1=D1 e B2=D2 sempre
 // se revezam juntos (mesma data), por isso os subgrupos "espelho" compartilham a lista.
+// ⚠️ Com a atualização do cronograma geral (set/2026), a janela do bloco de Oftalmo de A/C
+// mudou (perdeu uma sessão, já que 14/09 ficou só de manhã) e a de B/D também deslocou.
+// Ainda não temos a nova divisão específica por segunda/terça de cada subgrupo — por ora,
+// todo mundo (subgrupo 1 e 2) aparece na mesma segunda-feira do bloco; assim que a divisão
+// por dia for reconfirmada com a turma, dá pra separar de novo em datas de segunda/terça.
 const OFTALMO_DATES = {
-  AC1: ['2026-09-28','2026-10-06','2026-10-19','2026-11-24','2026-11-30','2026-12-08'],
-  AC2: ['2026-09-29','2026-10-05','2026-10-20','2026-11-23','2026-12-01','2026-12-07'],
-  BD1: ['2026-08-17','2026-08-25','2026-08-31','2026-10-27','2026-11-09','2026-11-17'],
-  BD2: ['2026-08-18','2026-08-24','2026-09-01','2026-10-26','2026-11-10','2026-11-16'],
-  FIXO_AC: ['2026-09-28','2026-10-05','2026-10-19','2026-11-23','2026-11-30','2026-12-07'],
-  FIXO_BD: ['2026-08-17','2026-08-24','2026-08-31','2026-10-26','2026-11-09','2026-11-16']
+  AC1: ['2026-09-28','2026-11-09','2026-11-16','2026-11-23'],
+  AC2: ['2026-09-28','2026-11-09','2026-11-16','2026-11-23'],
+  BD1: ['2026-08-17','2026-08-24','2026-08-31','2026-10-05','2026-10-19','2026-10-26'],
+  BD2: ['2026-08-17','2026-08-24','2026-08-31','2026-10-05','2026-10-19','2026-10-26'],
+  FIXO_AC: ['2026-09-28','2026-11-09','2026-11-16','2026-11-23'],
+  FIXO_BD: ['2026-08-17','2026-08-24','2026-08-31','2026-10-05','2026-10-19','2026-10-26']
 };
 
 // ── RODÍZIO COMPLETO DE SEGUNDA-FEIRA (manhã + tarde) ──
-// Cada grupo passa por 4 blocos de 3 segundas-feiras ao longo do semestre,
-// alternando entre 4 estações da manhã (Anestesia CC, Ortopedia Consultório,
-// Anestesia Simulação, Ortopedia B) e a estação da tarde correspondente
-// (Otorrino ou Oftalmo). Só a tarde de Oftalmo tem o revezamento por subgrupo
-// (ver OFTALMO_DATES acima) — Otorrino e as 4 manhãs valem para o grupo inteiro.
+// Atualizado conforme planilha de rodízio mais recente (set/2026). Cada grupo passa
+// por 4 blocos ao longo do semestre, alternando entre 4 estações da manhã (Anestesia CC,
+// Ortopedia Consultório, Anestesia Simulação, Ortopedia B) e a estação da tarde
+// correspondente (Otorrino ou Oftalmo). Só a tarde de Oftalmo tem o revezamento por
+// subgrupo (ver OFTALMO_DATES acima) — Otorrino e as 4 manhãs valem para o grupo inteiro.
+// 14/09 é dia de atividade só de manhã (a tarde é do Seminário Integrador do semestre),
+// por isso não gera evento de tarde para ninguém nesse dia — ver CIRURGIA_NO_TARDE_DATES.
+// 30/11 e 07/12 saíram do rodízio prático (viraram semana de provas teóricas).
+const CIRURGIA_NO_TARDE_DATES = ['2026-09-14'];
+
 const CIRURGIA_RODIZIO_BLOCKS = {
   A: [
     { mondays: ['2026-08-17', '2026-08-24', '2026-08-31'], manha: 'Anestesia CC', tarde: 'Otorrino' },
-    { mondays: ['2026-09-28', '2026-10-05', '2026-10-19'], manha: 'Ortopedia (Consultório)', tarde: 'Oftalmo' },
-    { mondays: ['2026-10-26', '2026-11-09', '2026-11-16'], manha: 'Anestesia (Simulação)', tarde: 'Otorrino' },
-    { mondays: ['2026-11-23', '2026-11-30', '2026-12-07'], manha: 'Ortopedia B', tarde: 'Oftalmo' }
+    { mondays: ['2026-09-14', '2026-09-28'], manha: 'Ortopedia (Consultório)', tarde: 'Oftalmo' },
+    { mondays: ['2026-10-05', '2026-10-19', '2026-10-26'], manha: 'Anestesia (Simulação)', tarde: 'Otorrino' },
+    { mondays: ['2026-11-09', '2026-11-16', '2026-11-23'], manha: 'Ortopedia B', tarde: 'Oftalmo' }
   ],
   B: [
     { mondays: ['2026-08-17', '2026-08-24', '2026-08-31'], manha: 'Ortopedia (Consultório)', tarde: 'Oftalmo' },
-    { mondays: ['2026-09-28', '2026-10-05', '2026-10-19'], manha: 'Anestesia (Simulação)', tarde: 'Otorrino' },
-    { mondays: ['2026-10-26', '2026-11-09', '2026-11-16'], manha: 'Ortopedia B', tarde: 'Oftalmo' },
-    { mondays: ['2026-11-23', '2026-11-30', '2026-12-07'], manha: 'Anestesia CC', tarde: 'Otorrino' }
+    { mondays: ['2026-09-14', '2026-09-28'], manha: 'Anestesia (Simulação)', tarde: 'Otorrino' },
+    { mondays: ['2026-10-05', '2026-10-19', '2026-10-26'], manha: 'Ortopedia B', tarde: 'Oftalmo' },
+    { mondays: ['2026-11-09', '2026-11-16', '2026-11-23'], manha: 'Anestesia CC', tarde: 'Otorrino' }
   ],
   C: [
     { mondays: ['2026-08-17', '2026-08-24', '2026-08-31'], manha: 'Anestesia (Simulação)', tarde: 'Otorrino' },
-    { mondays: ['2026-09-28', '2026-10-05', '2026-10-19'], manha: 'Ortopedia B', tarde: 'Oftalmo' },
-    { mondays: ['2026-10-26', '2026-11-09', '2026-11-16'], manha: 'Anestesia CC', tarde: 'Otorrino' },
-    { mondays: ['2026-11-23', '2026-11-30', '2026-12-07'], manha: 'Ortopedia (Consultório)', tarde: 'Oftalmo' }
+    { mondays: ['2026-09-14', '2026-09-28'], manha: 'Ortopedia B', tarde: 'Oftalmo' },
+    { mondays: ['2026-10-05', '2026-10-19', '2026-10-26'], manha: 'Anestesia CC', tarde: 'Otorrino' },
+    { mondays: ['2026-11-09', '2026-11-16', '2026-11-23'], manha: 'Ortopedia (Consultório)', tarde: 'Oftalmo' }
   ],
   D: [
     { mondays: ['2026-08-17', '2026-08-24', '2026-08-31'], manha: 'Ortopedia B', tarde: 'Oftalmo' },
-    { mondays: ['2026-09-28', '2026-10-05', '2026-10-19'], manha: 'Anestesia CC', tarde: 'Otorrino' },
-    { mondays: ['2026-10-26', '2026-11-09', '2026-11-16'], manha: 'Ortopedia (Consultório)', tarde: 'Oftalmo' },
-    { mondays: ['2026-11-23', '2026-11-30', '2026-12-07'], manha: 'Anestesia (Simulação)', tarde: 'Otorrino' }
+    { mondays: ['2026-09-14', '2026-09-28'], manha: 'Anestesia CC', tarde: 'Otorrino' },
+    { mondays: ['2026-10-05', '2026-10-19', '2026-10-26'], manha: 'Ortopedia (Consultório)', tarde: 'Oftalmo' },
+    { mondays: ['2026-11-09', '2026-11-16', '2026-11-23'], manha: 'Anestesia (Simulação)', tarde: 'Otorrino' }
   ]
 };
 
@@ -109,7 +119,7 @@ function buildCirurgiaRodizioEvents() {
   blocks.forEach(block => {
     block.mondays.forEach(date => {
       out.push({ date, time: '08:00', dur: 120, type: 'estagio', title: `Rodízio manhã — ${block.manha} (Grupo ${grupo})`, _key: 'rodm-' + (i++) });
-      if (block.tarde === 'Otorrino') {
+      if (block.tarde === 'Otorrino' && !CIRURGIA_NO_TARDE_DATES.includes(date)) {
         out.push({ date, time: '14:00', dur: 120, type: 'estagio', title: `Rodízio tarde — Otorrino (Grupo ${grupo})`, _key: 'rodt-' + (i++) });
       }
       // A tarde de Oftalmo é gerada à parte por buildOftalmoEvents(), pois depende do subgrupo.
@@ -161,7 +171,7 @@ function renderOftalmoPicker() {
         <select onchange="updateCirurgiaGrupo(this.value)" style="padding:8px;border-radius:8px;border:1px solid #94a3b8;font-family:'DM Mono',monospace">${grupoOpts}</select>
         <select onchange="updateCirurgiaOftalmoTipo(this.value)" style="padding:8px;border-radius:8px;border:1px solid #94a3b8;font-family:'DM Mono',monospace">${tipoOpts}</select>
       </div>
-      ${grupo && tipo ? `<span style="font-size:0.75rem;color:var(--slate)">Todos os seus rodízios (manhã + tarde) já aparecem na agenda abaixo e no calendário.</span>` : grupo ? `<span style="font-size:0.75rem;color:var(--rose)">Escolha sua situação (fixo/subgrupo 1/subgrupo 2) para a tarde de Oftalmo entrar certinha na agenda — as manhãs e o Otorrino já valem só com o grupo escolhido.</span>` : ''}
+      ${grupo && tipo ? `<span style="font-size:0.75rem;color:var(--slate)">Todos os seus rodízios (manhã + tarde) já aparecem na agenda abaixo e no calendário. ⚠️ A divisão exata de segunda/terça da tarde de Oftalmo ainda está sendo reconfirmada após a mudança do cronograma — por enquanto todo mundo aparece na segunda-feira do bloco.</span>` : grupo ? `<span style="font-size:0.75rem;color:var(--rose)">Escolha sua situação (fixo/subgrupo 1/subgrupo 2) para a tarde de Oftalmo entrar certinha na agenda — as manhãs e o Otorrino já valem só com o grupo escolhido.</span>` : ''}
       ${grupo ? renderCirurgiaBlocksSummary(grupo) : ''}
       ${rosterHtml}
     </div>

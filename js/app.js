@@ -291,6 +291,7 @@ function renderDiscPanel(d) {
     ${d.id === 'ped2' ? renderAmbulatorioPicker() : ''}
     ${d.id === 'cir2' ? renderOftalmoPicker() : ''}
     ${d.id === 'psicomed8' ? renderPsicomedPicker() : ''}
+    ${d.id === 'sfc5' ? renderOsceRoster() : ''}
     <div class="dash-title">📅 Próximas aulas e provas</div>
     ${renderDisciplineAgenda(d)}
     <div style="margin-bottom:20px">

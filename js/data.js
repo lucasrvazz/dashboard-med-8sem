@@ -65,7 +65,7 @@ const TEMPLATE_DISCIPLINES = [
     {date:'2026-09-02', time:'10:00', type:'aula', title:'Oxigenoterapia', prof:'Meimei', local:'BSA Sul - Bloco Térreo (sala 41/10)'},
     {date:'2026-09-08', time:'10:00', type:'estagio', title:'Lab. Simulação — Ventilação (Turma A)', local:'Lab. Simulação HUB - Unidade II', prof:'Cássia e Meimei'},
     {date:'2026-09-08', time:'12:00', type:'estagio', title:'Lab. Simulação — Ventilação (Turma B)', local:'Lab. Simulação HUB - Unidade II', prof:'Cássia e Meimei'},
-    {date:'2026-09-09', time:'10:00', type:'aula', title:'PCR', prof:'Karina', local:'BSA Sul - Bloco Térreo (sala 41/10)'},
+    {date:'2026-09-09', time:'10:00', type:'aula', title:'TCE (Traumatismo Cranioencefálico)', prof:'Karina', local:'BSA Sul - Bloco Térreo (sala 41/10)'},
     {date:'2026-09-15', time:'10:00', type:'seminario', title:'Seminário Integrador (14 a 17/09)', prof:'Cássia e Meimei', local:'UCA - Sala Multiuso (Enfermaria, 1º andar)'},
     {date:'2026-09-16', time:'10:00', type:'seminario', title:'Seminário Integrador (14 a 17/09)', prof:'Meimei', local:'BSA Sul - Bloco Térreo (sala 41/10)'},
     {date:'2026-09-22', time:'10:00', type:'aula', title:'Febre sem sinais localizatórios', prof:'Cássia', local:'UCA - Sala Multiuso (Enfermaria, 1º andar)'},
@@ -129,7 +129,7 @@ const TEMPLATE_DISCIPLINES = [
     {date:'2026-08-19', time:'13:00', dur:240, type:'aula', title:'Queimadura, choque, anafilaxia; HAS e DM descompensados', prof:'Thiago', local:'Auditório BSA'},
     {date:'2026-08-26', time:'13:00', dur:240, type:'seminario', title:'Simulação Grupo A (animais peçonhentos); Dor abdominal', prof:'Thiago', local:'Auditório BSA'},
     {date:'2026-09-02', time:'13:00', dur:240, type:'prova', title:'Teste de Progresso ABEM', local:'Auditório BSA'},
-    {date:'2026-09-09', time:'13:00', dur:240, type:'prova', title:'Avaliação Teórica 1 + OSCE 1 (A,B) / Prática em serviços (C,D,E,F)', assessmentId:'av1', local:'Auditório BSA'},
+    {date:'2026-09-09', time:'13:00', dur:240, type:'prova', title:'Avaliação Teórica 1 + OSCE 1', assessmentId:'av1', local:'Auditório BSA'},
     {date:'2026-09-16', time:'13:00', dur:240, type:'evento', title:'Semana Integradora', local:'Auditório BSA'},
     {date:'2026-09-23', time:'13:00', dur:240, type:'evento', title:'SEMUNI', local:'Auditório BSA'},
     {date:'2026-09-30', time:'13:00', dur:240, type:'seminario', title:'Simulação Grupo D (tontura); Grupo E (dor lombar)', local:'Auditório BSA'},
@@ -306,6 +306,7 @@ const TEMPLATE_DISCIPLINES = [
   // blocos práticos 8h-10h (anestesia/ortopedia) e 14h-16h (otorrino/oftalmo) da grade oficial,
   // cujo conteúdo semana a semana ainda não foi enviado (veja aviso em "Como funciona a nota").
   schedule: [
+    {date:'2026-08-10', time:'08:00', dur:120, type:'aula', title:'Apresentação do rodízio prático (Anestesia/Ortopedia/Otorrino/Oftalmo)', local:'Auditório 1'},
     {date:'2026-08-10', time:'11:00', type:'aula', title:'Avaliação/preparo pré-anestésico', prof:'Henrique', local:'Auditório 1'},
     {date:'2026-08-10', time:'13:00', type:'aula', title:'Exame oftalmológico normal e ametropias', prof:'Chalita', local:'Auditório 1'},
     {date:'2026-08-17', time:'11:00', type:'aula', title:'Conceitos básicos em ortopedia e investigação diagnóstica', prof:'Eugenio', local:'Auditório 1'},
