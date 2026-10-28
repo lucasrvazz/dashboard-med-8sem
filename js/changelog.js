@@ -8,6 +8,8 @@ const CHANGELOG_GROUPS = [
   {
     date: 'Mais recente',
     items: [
+      { emoji: '🧪', title: 'Aula de Intoxicações de UE-PED antecipada', desc: 'A aula de Intoxicações saiu de 04/11 e passou para quinta, 29/10, às 10h, na agenda de UE-PED e no calendário.' },
+      { emoji: '↩️', title: 'Cronograma de SFC 5 voltou ao original', desc: 'O recesso do Dia do Servidor Público (28/10) foi mantido pelo professor, então o ajuste de adiantar uma semana foi desfeito: Avaliação Teórica 2 + OSCE 2 em 25/11 e Avaliação Teórica 3 + OSCE 3 em 09/12.' },
       { emoji: '🤝', title: 'Cronograma de SFC 5 adiantado uma semana', desc: 'Como não haverá recesso em 28/10, as aulas de SFC 5 a partir daí subiram uma semana: Simulação B/C em 28/10, Ansiedade em 04/11, Simulação H/I em 11/11, Avaliação Teórica 2 + OSCE 2 em 18/11, Simulação J em 25/11 e Avaliação Teórica 3 + OSCE 3 em 02/12 (lista de alunos do OSCE acompanhou as novas datas).' },
       { emoji: '✅', title: 'Conteúdo de Cirurgia 2 separado por especialidade', desc: 'A seção de conteúdo que misturava Ortopedia e Oftalmologia agora virou duas: Ortopedia, Anestesiologia, Oftalmologia e Otorrinolaringologia, cada uma com sua lista própria. Quem já tinha marcado tópicos como estudados não perde o progresso.' },
       { emoji: '🐛', title: 'Corrigido erro "Invalid start time" na sincronização', desc: 'A cada edição de cronograma, o "endereço" interno de um evento já sincronizado podia mudar e ficar misturando formato de dia-inteiro com formato de horário no Google, que rejeitava a atualização. Se você já sincronizou antes, é uma boa apagar a agenda "🎓 Medicina 8º Sem — 117" da sua Google Agenda e sincronizar de novo, pra não ficar com eventos antigos duplicados.' },

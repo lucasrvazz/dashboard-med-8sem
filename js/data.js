@@ -84,8 +84,8 @@ const TEMPLATE_DISCIPLINES = [
     {date:'2026-10-21', time:'10:00', type:'aula', title:'Meningite e Encefalite', prof:'Karina', local:'BSA Sul - Bloco Térreo (sala 41/10)'},
     {date:'2026-10-27', time:'10:00', type:'aula', title:'Hidratação em Emergência Pediátrica (prática)', prof:'Meimei', local:'UCA - Sala Multiuso (Enfermaria, 1º andar)'},
     {date:'2026-10-28', type:'evento', title:'Ponto facultativo — sem aula'},
+    {date:'2026-10-29', time:'10:00', type:'aula', title:'Intoxicações', prof:'Karina', local:'BSA Sul - Bloco Térreo (sala 41/10)'},
     {date:'2026-11-03', time:'10:00', type:'aula', title:'ITU em Emergência', prof:'Meimei', local:'UCA - Sala Multiuso (Enfermaria, 1º andar)'},
-    {date:'2026-11-04', time:'10:00', type:'aula', title:'Intoxicações', prof:'Karina', local:'BSA Sul - Bloco Térreo (sala 41/10)'},
     {date:'2026-11-10', time:'10:00', type:'aula', title:'Distúrbio Ácido-Básico', prof:'Armando', local:'UCA - Sala Multiuso (Enfermaria, 1º andar)'},
     {date:'2026-11-11', time:'10:00', type:'aula', title:'TCE', prof:'Karina', local:'BSA Sul - Bloco Térreo (sala 41/10)'},
     {date:'2026-11-17', time:'10:00', type:'aula', title:'Urgências Dermatológicas', prof:'Danielle', local:'UCA - Sala Multiuso (Enfermaria, 1º andar)'},
@@ -109,8 +109,8 @@ const TEMPLATE_DISCIPLINES = [
   calcDesc: 'Soma ponderada: 3 Avaliações Teóricas (10% cada = 30%) + Simulação Realística (20%) + OSCE (20%) + 2 Visitas à UBS (5% cada = 10%) + Atividade Integradora (20%). Sistema de menções UnB: SS 9–10, MS 7–8,9, MM 5–6,9 (aprovado), MI 3–4,9, II 0,1–2,9, SR &lt;75% de frequência. Insira as notas de 0 a 10.',
   assessments: [
     { id: 'av1', label: 'Avaliação Teórica 1 (09/09)', weight: 0.10, max: 10 },
-    { id: 'av2', label: 'Avaliação Teórica 2 (18/11)', weight: 0.10, max: 10 },
-    { id: 'av3', label: 'Avaliação Teórica 3 (02/12)', weight: 0.10, max: 10 },
+    { id: 'av2', label: 'Avaliação Teórica 2 (25/11)', weight: 0.10, max: 10 },
+    { id: 'av3', label: 'Avaliação Teórica 3 (09/12)', weight: 0.10, max: 10 },
     { id: 'simulacao', label: 'Simulação Realística (grupo)', weight: 0.20, max: 10 },
     { id: 'osce', label: 'OSCE (1+2+3)', weight: 0.20, max: 10 },
     { id: 'ubs1', label: 'Visita à UBS 1', weight: 0.05, max: 10 },
@@ -118,8 +118,8 @@ const TEMPLATE_DISCIPLINES = [
   ],
   sections: [
     { title: 'Antes da Avaliação Teórica 1 (até 09/09)', items: ['Rede de Urgência e Emergência','Acolhimento e Classificação de Risco na APS','Queimadura, choque e anafilaxia','HAS e DM descompensados','Dor abdominal','Acidentes com animais peçonhentos'] },
-    { title: 'Antes da Avaliação Teórica 2 (até 18/11)', items: ['Mordeduras: profilaxia da raiva e do tétano','Abordagem da violência na APS','Ansiedade e Reforma Psiquiátrica','Tontura, dor lombar, tosse, dispneia (simulações)','Cefaleia, disúria, depressão/ideação suicida, diarreia (simulações)','Julgamento Simulado CRM-DF'] },
-    { title: 'Antes da Avaliação Teórica 3 (até 02/12)', items: ['Dor torácica','Álcool, dependência e abstinência'] },
+    { title: 'Antes da Avaliação Teórica 2 (até 25/11)', items: ['Mordeduras: profilaxia da raiva e do tétano','Abordagem da violência na APS','Ansiedade e Reforma Psiquiátrica','Tontura, dor lombar, tosse, dispneia (simulações)','Cefaleia, disúria, depressão/ideação suicida, diarreia (simulações)','Julgamento Simulado CRM-DF'] },
+    { title: 'Antes da Avaliação Teórica 3 (até 09/12)', items: ['Dor torácica','Álcool, dependência e abstinência'] },
     { title: 'Queixas clínicas prevalentes na APS', items: ['Cefaleia','Insônia','Dor miofascial','Tontura','Diarreia','Náusea e vômitos','Disúria','Abordagem aos sintomáticos respiratórios'] },
     { title: 'Urgência e emergência na APS', items: ['IAM','AVE','Trauma/queimadura','Choque','Anafilaxia','Dispneia','Dor torácica','Hiperglicemia','Pico hipertensivo','Acidentes com animais peçonhentos'] }
   ],
@@ -136,12 +136,13 @@ const TEMPLATE_DISCIPLINES = [
     {date:'2026-10-07', time:'13:00', dur:240, type:'evento', title:'Julgamento Simulado CRM-DF', local:'Auditório BSA'},
     {date:'2026-10-14', time:'13:00', dur:240, type:'seminario', title:'Simulação Grupo F (tosse); Grupo G (dispneia)', local:'Auditório BSA'},
     {date:'2026-10-21', time:'13:00', dur:240, type:'aula', title:'Mordeduras: profilaxia raiva/tétano; Violência na APS', prof:'Felipe', local:'Auditório BSA'},
-    {date:'2026-10-28', time:'13:00', dur:240, type:'seminario', title:'Simulação Grupo B (cefaleia); Grupo C (disúria)', local:'Auditório BSA'},
-    {date:'2026-11-04', time:'13:00', dur:240, type:'aula', title:'Ansiedade e Reforma Psiquiátrica; Filme "Si può fare"', prof:'Felipe', local:'Auditório BSA'},
-    {date:'2026-11-11', time:'13:00', dur:240, type:'seminario', title:'Simulação Grupo H (depressão/ideação suicida); Grupo I (diarreia)', local:'Auditório BSA'},
-    {date:'2026-11-18', time:'13:00', dur:240, type:'prova', title:'Avaliação Teórica 2 + OSCE 2', assessmentId:'av2', local:'Auditório BSA'},
-    {date:'2026-11-25', time:'13:00', dur:240, type:'seminario', title:'Simulação Grupo J (álcool/dependência); Dor torácica', prof:'Thiago', local:'Auditório BSA'},
-    {date:'2026-12-02', time:'13:00', dur:240, type:'prova', title:'Avaliação Teórica 3 + OSCE 3', assessmentId:'av3', local:'Auditório BSA'}
+    {date:'2026-10-28', type:'evento', title:'Recesso do Dia do Servidor Público'},
+    {date:'2026-11-04', time:'13:00', dur:240, type:'seminario', title:'Simulação Grupo B (cefaleia); Grupo C (disúria)', local:'Auditório BSA'},
+    {date:'2026-11-11', time:'13:00', dur:240, type:'aula', title:'Ansiedade e Reforma Psiquiátrica; Filme "Si può fare"', prof:'Felipe', local:'Auditório BSA'},
+    {date:'2026-11-18', time:'13:00', dur:240, type:'seminario', title:'Simulação Grupo H (depressão/ideação suicida); Grupo I (diarreia)', local:'Auditório BSA'},
+    {date:'2026-11-25', time:'13:00', dur:240, type:'prova', title:'Avaliação Teórica 2 + OSCE 2', assessmentId:'av2', local:'Auditório BSA'},
+    {date:'2026-12-02', time:'13:00', dur:240, type:'seminario', title:'Simulação Grupo J (álcool/dependência); Dor torácica', prof:'Thiago', local:'Auditório BSA'},
+    {date:'2026-12-09', time:'13:00', dur:240, type:'prova', title:'Avaliação Teórica 3 + OSCE 3', assessmentId:'av3', local:'Auditório BSA'}
   ]
 },
 
