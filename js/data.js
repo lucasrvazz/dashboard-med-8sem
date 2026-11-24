@@ -118,8 +118,8 @@ const TEMPLATE_DISCIPLINES = [
   ],
   sections: [
     { title: 'Antes da Avaliação Teórica 1 (até 09/09)', items: ['Rede de Urgência e Emergência','Acolhimento e Classificação de Risco na APS','Queimadura, choque e anafilaxia','HAS e DM descompensados','Dor abdominal','Acidentes com animais peçonhentos'] },
-    { title: 'Antes da Avaliação Teórica 2 (até 25/11)', items: ['Mordeduras: profilaxia da raiva e do tétano','Abordagem da violência na APS','Ansiedade e Reforma Psiquiátrica','Tontura, dor lombar, tosse, dispneia (simulações)','Cefaleia, disúria, depressão/ideação suicida, diarreia (simulações)','Julgamento Simulado CRM-DF'] },
-    { title: 'Antes da Avaliação Teórica 3 (até 09/12)', items: ['Dor torácica','Álcool, dependência e abstinência'] },
+    { title: 'Antes da Avaliação Teórica 2 (até 25/11)', items: ['Tontura','Dor lombar','Tosse','Dispneia','Mordeduras: profilaxia da raiva e do tétano','Abordagem da violência na APS','Cefaleia'] },
+    { title: 'Antes da Avaliação Teórica 3 (até 09/12)', items: ['Disúria','Ansiedade e Reforma Psiquiátrica','Depressão e ideação suicida','Diarreia','Álcool, dependência e abstinência','Dor torácica'] },
     { title: 'Queixas clínicas prevalentes na APS', items: ['Cefaleia','Insônia','Dor miofascial','Tontura','Diarreia','Náusea e vômitos','Disúria','Abordagem aos sintomáticos respiratórios'] },
     { title: 'Urgência e emergência na APS', items: ['IAM','AVE','Trauma/queimadura','Choque','Anafilaxia','Dispneia','Dor torácica','Hiperglicemia','Pico hipertensivo','Acidentes com animais peçonhentos'] }
   ],

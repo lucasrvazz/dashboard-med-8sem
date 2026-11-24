@@ -8,6 +8,7 @@ const CHANGELOG_GROUPS = [
   {
     date: 'Mais recente',
     items: [
+      { emoji: '🤝', title: 'Conteúdo das provas 2 e 3 de SFC 5 corrigido', desc: 'Prova 2 (25/11): Tontura, Dor lombar, Tosse, Dispneia, Mordeduras, Violência na APS e Cefaleia. Prova 3 (09/12): Disúria, Ansiedade e Reforma Psiquiátrica, Depressão e ideação suicida, Diarreia, Álcool/dependência/abstinência e Dor torácica — cada tema agora é um item separado no checklist.' },
       { emoji: '🧪', title: 'Aula de Intoxicações de UE-PED antecipada', desc: 'A aula de Intoxicações saiu de 04/11 e passou para quinta, 29/10, às 10h, na agenda de UE-PED e no calendário.' },
       { emoji: '↩️', title: 'Cronograma de SFC 5 voltou ao original', desc: 'O recesso do Dia do Servidor Público (28/10) foi mantido pelo professor, então o ajuste de adiantar uma semana foi desfeito: Avaliação Teórica 2 + OSCE 2 em 25/11 e Avaliação Teórica 3 + OSCE 3 em 09/12.' },
       { emoji: '🤝', title: 'Cronograma de SFC 5 adiantado uma semana', desc: 'Como não haverá recesso em 28/10, as aulas de SFC 5 a partir daí subiram uma semana: Simulação B/C em 28/10, Ansiedade em 04/11, Simulação H/I em 11/11, Avaliação Teórica 2 + OSCE 2 em 18/11, Simulação J em 25/11 e Avaliação Teórica 3 + OSCE 3 em 02/12 (lista de alunos do OSCE acompanhou as novas datas).' },
