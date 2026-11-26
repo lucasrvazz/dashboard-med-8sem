@@ -116,12 +116,12 @@ const TEMPLATE_DISCIPLINES = [
     { id: 'ubs1', label: 'Visita à UBS 1', weight: 0.05, max: 10 },
     { id: 'ubs2', label: 'Visita à UBS 2', weight: 0.05, max: 10 }
   ],
+  // Seções que já existiram e foram retiradas — some também para quem já tinha salvo.
+  removedSections: ['Queixas clínicas prevalentes na APS', 'Urgência e emergência na APS'],
   sections: [
     { title: 'Antes da Avaliação Teórica 1 (até 09/09)', items: ['Rede de Urgência e Emergência','Acolhimento e Classificação de Risco na APS','Queimadura, choque e anafilaxia','HAS e DM descompensados','Dor abdominal','Acidentes com animais peçonhentos'] },
     { title: 'Antes da Avaliação Teórica 2 (até 25/11)', items: ['Tontura','Dor lombar','Tosse','Dispneia','Mordeduras: profilaxia da raiva e do tétano','Abordagem da violência na APS','Cefaleia'] },
-    { title: 'Antes da Avaliação Teórica 3 (até 09/12)', items: ['Disúria','Ansiedade e Reforma Psiquiátrica','Depressão e ideação suicida','Diarreia','Álcool, dependência e abstinência','Dor torácica'] },
-    { title: 'Queixas clínicas prevalentes na APS', items: ['Cefaleia','Insônia','Dor miofascial','Tontura','Diarreia','Náusea e vômitos','Disúria','Abordagem aos sintomáticos respiratórios'] },
-    { title: 'Urgência e emergência na APS', items: ['IAM','AVE','Trauma/queimadura','Choque','Anafilaxia','Dispneia','Dor torácica','Hiperglicemia','Pico hipertensivo','Acidentes com animais peçonhentos'] }
+    { title: 'Antes da Avaliação Teórica 3 (até 09/12)', items: ['Disúria','Ansiedade e Reforma Psiquiátrica','Depressão e ideação suicida','Diarreia','Álcool, dependência e abstinência','Dor torácica'] }
   ],
   // Horário fixo semanal: Quarta-feira, 13h às 17h.
   schedule: [

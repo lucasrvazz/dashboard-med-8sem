@@ -18,9 +18,19 @@ function faltaKeyFor(ev, idx) {
   return `${ev.date}_${(ev.time || 'ad').replace(':', '')}_${idx}`;
 }
 
+// Turma do Laboratório de Simulação de UE-PED (A-E), lida do título do evento.
+// Cada aluno só vai à sessão de lab da própria turma, então só ela entra na
+// carga horária / controle de faltas.
+function uepedLabTurma(ev) {
+  const m = /\(Turma ([A-E])\)/.exec(ev.title || '');
+  return m ? m[1] : null;
+}
+
 // Reúne todos os eventos "que contam para carga horária" de uma disciplina,
 // incluindo os gerados dinamicamente (ambulatório de Ped 2, oftalmo/rodízios
-// de Cirurgia 2).
+// de Cirurgia 2). A chave de cada falta (_fkey) é calculada sobre a lista
+// completa ANTES do filtro de turma, para que faltas já marcadas continuem
+// apontando para o mesmo evento.
 function faltaEventsFor(d) {
   let sched = (d.schedule || []).slice();
   if (d.id === 'ped2' && typeof buildPed2AmbulatorioEvents === 'function') sched = sched.concat(buildPed2AmbulatorioEvents());
@@ -28,9 +38,28 @@ function faltaEventsFor(d) {
     if (typeof buildOftalmoEvents === 'function') sched = sched.concat(buildOftalmoEvents());
     if (typeof buildCirurgiaRodizioEvents === 'function') sched = sched.concat(buildCirurgiaRodizioEvents());
   }
-  return sched
+  const all = sched
     .filter(ev => ev.time && FALTA_TYPES_COUNT.has(ev.type))
-    .sort((a, b) => a.date.localeCompare(b.date) || (a.time || '').localeCompare(b.time || ''));
+    .sort((a, b) => a.date.localeCompare(b.date) || (a.time || '').localeCompare(b.time || ''))
+    .map((ev, idx) => ({ ...ev, _fkey: faltaKeyFor(ev, idx) }));
+  if (d.id === 'ueped') {
+    const turma = userSettings.uepedTurma;
+    return all.filter(ev => { const t = uepedLabTurma(ev); return !t || t === turma; });
+  }
+  return all;
+}
+
+function updateUepedTurma(val) { userSettings.uepedTurma = val || null; scheduleSave(); renderAll(); }
+
+function renderUepedTurmaPicker() {
+  const turma = userSettings.uepedTurma || '';
+  const opts = ['', 'A', 'B', 'C', 'D', 'E'].map(t => `<option value="${t}" ${turma === t ? 'selected' : ''}>${t ? 'Turma ' + t : 'Escolher turma...'}</option>`).join('');
+  return `
+    <div class="global-pi-box" style="border-color:${turma ? 'var(--sky)' : 'var(--rose)'};flex-direction:column;align-items:flex-start;gap:8px">
+      <label>🧪 Sua turma do Laboratório de Simulação (UE-PED):</label>
+      <select onchange="updateUepedTurma(this.value)" style="padding:8px;border-radius:8px;border:1px solid #94a3b8;font-family:'DM Mono',monospace">${opts}</select>
+      <span style="font-size:0.75rem;color:${turma ? 'var(--slate)' : 'var(--rose)'}">${turma ? 'Só os labs da sua turma entram na carga horária e nas faltas.' : 'Escolha sua turma — até lá, nenhum lab entra na contagem de faltas.'}</span>
+    </div>`;
 }
 
 function getDisciplineAbsenceMap(disciplineId) {
@@ -43,10 +72,10 @@ function calcFaltasStats(d) {
   const events = faltaEventsFor(d);
   const absMap = getDisciplineAbsenceMap(d.id);
   let totalMin = 0, absentMin = 0;
-  events.forEach((ev, idx) => {
+  events.forEach(ev => {
     const dur = ev.dur || 60;
     totalMin += dur;
-    if (absMap[faltaKeyFor(ev, idx)]) absentMin += dur;
+    if (absMap[ev._fkey]) absentMin += dur;
   });
   const totalH = totalMin / 60;
   const absentH = absentMin / 60;
@@ -86,8 +115,8 @@ function renderFaltasSection(d) {
   const absMap = getDisciplineAbsenceMap(d.id);
   const today = new Date().toISOString().slice(0, 10);
 
-  const rows = s.events.map((ev, idx) => {
-    const key = faltaKeyFor(ev, idx);
+  const rows = s.events.map(ev => {
+    const key = ev._fkey;
     const faltou = !!absMap[key];
     const meta = EVENT_TYPE_META[ev.type] || { label: ev.type, color: '#94a3b8' };
     const past = ev.date < today;
@@ -109,6 +138,7 @@ function renderFaltasSection(d) {
 
   return `
     <div class="dash-title">📋 Controle de Faltas</div>
+    ${d.id === 'ueped' ? renderUepedTurmaPicker() : ''}
     <div class="grades-input-panel" style="flex-direction:column;align-items:stretch;gap:14px">
       <div class="calc-info-box">
         <strong>Regra da UnB:</strong> presença mínima de 75% (máximo <b>25%</b> de faltas na carga horária). Ultrapassar isso reprova com menção SR, mesmo se todas as notas forem altas.

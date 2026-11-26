@@ -114,9 +114,12 @@ function ensureGCalToken() {
 //  - Além disso, o status (concluído ou não) de cada tópico é lembrado por texto
 //    globalmente entre todas as seções salvas, como uma segunda rede de segurança:
 //    mesmo um tópico que "mudou de seção" continua com o progresso certo.
-function mergeSections(tmplSections, savedSections) {
+function mergeSections(tmplSections, savedSections, removedTitles) {
   tmplSections = tmplSections || [];
-  savedSections = savedSections || [];
+  // Seções que saíram do template de propósito (removedSections em data.js) são
+  // descartadas aqui — sem isso, seriam preservadas como "seção extra do usuário".
+  const removed = new Set(removedTitles || []);
+  savedSections = (savedSections || []).filter(s => !removed.has(s.title));
 
   const globalStatus = {};
   savedSections.forEach(sec => (sec.items || []).forEach(i => {
@@ -189,7 +192,7 @@ async function loadFromFirestore() {
           d.calcDesc = tmpl.calcDesc;
           d.schedule = tmpl.schedule;
           d.passingGrade = tmpl.passingGrade;
-          d.sections = mergeSections(tmpl.sections, d.sections);
+          d.sections = mergeSections(tmpl.sections, d.sections, tmpl.removedSections);
         }
         if (!d.sections) d.sections = [];
         d.sections.forEach(s => s.items.forEach(i => { if (i.status === undefined) i.status = 0; }));
