@@ -8,6 +8,7 @@ const CHANGELOG_GROUPS = [
   {
     date: 'Mais recente',
     items: [
+      { emoji: '🧹', title: 'Atividade de extensão saiu do conteúdo de UE-PED', desc: 'A seção "Atividade de Extensão (vídeos)" foi retirada do checklist de conteúdo de UE-PED — ficam só os temas das duas avaliações.' },
       { emoji: '🧪', title: 'Faltas de UE-PED contam só o lab da sua turma', desc: 'Na sub-aba Faltas de UE-PED, escolha sua turma do Laboratório de Simulação (A a E): só as sessões de lab da sua turma entram na carga horária e no limite de 25% — os labs das outras turmas não contam mais.' },
       { emoji: '🧹', title: 'Conteúdo de SFC 5 enxugado', desc: 'Saíram as seções "Queixas clínicas prevalentes na APS" e "Urgência e emergência na APS" — o conteúdo de SFC 5 agora fica só com os temas de cada prova.' },
       { emoji: '🤝', title: 'Conteúdo das provas 2 e 3 de SFC 5 corrigido', desc: 'Prova 2 (25/11): Tontura, Dor lombar, Tosse, Dispneia, Mordeduras, Violência na APS e Cefaleia. Prova 3 (09/12): Disúria, Ansiedade e Reforma Psiquiátrica, Depressão e ideação suicida, Diarreia, Álcool/dependência/abstinência e Dor torácica — cada tema agora é um item separado no checklist.' },

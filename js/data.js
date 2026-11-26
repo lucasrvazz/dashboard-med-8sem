@@ -46,10 +46,11 @@ const TEMPLATE_DISCIPLINES = [
     { id: 'av2', label: 'Avaliação Final (01/12)', weight: 0.25, max: 10 },
     { id: 'presenca', label: 'Nota de Presença/Forms', weight: 0.25, max: 10 }
   ],
+  // Seções que já existiram e foram retiradas — some também para quem já tinha salvo.
+  removedSections: ['Atividade de Extensão (vídeos — entrega 24/11)'],
   sections: [
     { title: '1ª Avaliação (até 20/10)', items: ['Introdução à disciplina / MINI PALS','Bronquiolite viral aguda','Distúrbios Respiratórios (Laringite/Crise; OVACE)','Asma — Crise','Convulsões em PS PED','PCR (Parada Cardiorrespiratória)','Oxigenoterapia','Lab. Simulação — Ventilação','Lab. Simulação — PCR','Febre sem sinais localizatórios','Criança Gravemente Enferma','Choque séptico','Cetoacidose diabética'] },
-    { title: '2ª Avaliação (até 01/12)', items: ['Meningite e Encefalite','Hidratação em Emergência Pediátrica','ITU em Emergência','Intoxicações','Distúrbio Ácido-Básico','TCE (Traumatismo Cranioencefálico)','Urgências Dermatológicas','Queimados','Cefaleia','Emergências Hematológicas'] },
-    { title: 'Atividade de Extensão (vídeos — entrega 24/11)', items: ['Reidratação oral em casa','Uso do DEA em ambiente público','RCP em público e em ambiente hospitalar','Desfibrilador manual (FV/TV sem pulso)','Convulsão febril no PS PED','Manobras de desengasgo (lactente/criança/adulto)','Laringite/crupe — quando pensar e tratar','Bronquiolite — quando pensar e tratar','Asma por faixa etária — abordagem no PS PED','Cetoacidose diabética — suspeita e tratamento','Plano de Ação para Asma'] }
+    { title: '2ª Avaliação (até 01/12)', items: ['Meningite e Encefalite','Hidratação em Emergência Pediátrica','ITU em Emergência','Intoxicações','Distúrbio Ácido-Básico','TCE (Traumatismo Cranioencefálico)','Urgências Dermatológicas','Queimados','Cefaleia','Emergências Hematológicas'] }
   ],
   // Horário fixo semanal: Terça e Quarta, bloco 10h-11h (Turma A/C) ou 11h-12h (Turma B/D).
   // Exceção: os Laboratórios de Simulação (set/out) têm 5 turmas (A-E) em horários
