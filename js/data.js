@@ -298,6 +298,8 @@ const TEMPLATE_DISCIPLINES = [
     { id: 'prova_orl', label: 'Prova de Otorrinolaringologia (07/12)', weight: 0.175, max: 10 },
     { id: 'avaliacao_pratica', label: 'Avaliação Prática (AP, 4 sub-módulos)', weight: 0.20, max: 10 }
   ],
+  // Títulos antigos (de antes da separação por especialidade) — trocados pelos atuais.
+  legacySectionTitles: ['Prova Ortopedia/Oftalmologia', 'Prova de Anestesia', 'Prova de Otorrinolaringologia'],
   sections: [
     { title: 'Ortopedia', items: ['Introdução à ortopedia e traumatologia','Conceitos básicos de ortopedia / investigação diagnóstica em ortopedia','Traumatologia: fraturas — classificação, aspectos clínicos e consolidação','Lesões traumáticas fundamentais: contusões, entorses, fraturas, luxações, lesões musculares e tendinopatias','Infecções osteoarticulares: osteomielite, artrite séptica, tuberculose','Lombalgias mecânicas, lombociatalgias','Osteoartroses','Tumores ósseos'] },
     { title: 'Anestesiologia', items: ['Avaliação e preparo pré-anestésico','Via aérea e ventilação','Anestesia geral','Anestesia regional','Complicações em anestesia','Dor: neurofisiologia e aspectos clínicos'] },

@@ -114,8 +114,11 @@ function ensureGCalToken() {
 //  - Além disso, o status (concluído ou não) de cada tópico é lembrado por texto
 //    globalmente entre todas as seções salvas, como uma segunda rede de segurança:
 //    mesmo um tópico que "mudou de seção" continua com o progresso certo.
-function mergeSections(tmplSections, savedSections, removedTitles) {
+function mergeSections(tmplSections, savedSections, removedTitles, legacyTitles) {
   tmplSections = tmplSections || [];
+  // Títulos que eram o padrão do template antigamente (legacySectionTitles em data.js):
+  // se o título salvo ainda é um deles, o aluno não o renomeou — usamos o título novo.
+  const legacy = new Set(legacyTitles || []);
   // Seções que saíram do template de propósito (removedSections em data.js) são
   // descartadas aqui — sem isso, seriam preservadas como "seção extra do usuário".
   const removed = new Set(removedTitles || []);
@@ -141,7 +144,7 @@ function mergeSections(tmplSections, savedSections, removedTitles) {
     const savedSec = bestIdx !== -1 ? savedSections[bestIdx] : null;
     if (bestIdx !== -1) usedSavedIdx.add(bestIdx);
 
-    const title = savedSec && savedSec.title ? savedSec.title : tmplSec.title;
+    const title = savedSec && savedSec.title && !legacy.has(savedSec.title) ? savedSec.title : tmplSec.title;
     const savedItems = (savedSec && savedSec.items) || [];
     const usedLabels = new Set();
 
@@ -192,7 +195,7 @@ async function loadFromFirestore() {
           d.calcDesc = tmpl.calcDesc;
           d.schedule = tmpl.schedule;
           d.passingGrade = tmpl.passingGrade;
-          d.sections = mergeSections(tmpl.sections, d.sections, tmpl.removedSections);
+          d.sections = mergeSections(tmpl.sections, d.sections, tmpl.removedSections, tmpl.legacySectionTitles);
         }
         if (!d.sections) d.sections = [];
         d.sections.forEach(s => s.items.forEach(i => { if (i.status === undefined) i.status = 0; }));
